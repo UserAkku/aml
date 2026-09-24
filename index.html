@@ -1,0 +1,3350 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AML Notes — Akhilesh ki Machine Learning Diary</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Kalam:wght@300;400;700&family=Patrick+Hand&display=swap');
+
+  :root {
+    --paper: #fdf8f0;
+    --paper-dark: #f5ead6;
+    --ink: #2c1810;
+    --ink-light: #5a3e2b;
+    --red: #c0392b;
+    --blue: #1a5276;
+    --green: #1e8449;
+    --orange: #d35400;
+    --purple: #7d3c98;
+    --yellow-hl: #fff3cd;
+    --pink-hl: #fce4ec;
+    --blue-hl: #e3f2fd;
+    --green-hl: #e8f5e9;
+    --line: #c8b99a;
+    --shadow: rgba(0,0,0,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Kalam', cursive;
+    background: #e8ddd0;
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1.8;
+    min-height: 100vh;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 31px,
+        rgba(180,160,130,0.15) 31px,
+        rgba(180,160,130,0.15) 32px
+      );
+  }
+
+  /* ===== WRAPPER ===== */
+  .notebook {
+    max-width: 860px;
+    margin: 0 auto;
+    background: var(--paper);
+    min-height: 100vh;
+    box-shadow: 4px 0 20px var(--shadow), -2px 0 8px var(--shadow);
+    position: relative;
+    padding-bottom: 80px;
+  }
+
+  /* Notebook margin line */
+  .notebook::before {
+    content: '';
+    position: fixed;
+    left: calc(50% - 430px + 52px);
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgba(200,100,100,0.25);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== COVER ===== */
+  .cover {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 40%, #2c3e50 100%);
+    color: white;
+    text-align: center;
+    padding: 60px 30px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    pointer-events: none;
+  }
+
+  .cover-subject {
+    font-family: 'Caveat', cursive;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 12px;
+  }
+
+  .cover-title {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(32px, 8vw, 54px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+  }
+
+  .cover-sub {
+    font-family: 'Kalam', cursive;
+    font-size: 18px;
+    opacity: 0.85;
+    margin-bottom: 30px;
+  }
+
+  .cover-divider {
+    width: 60px;
+    height: 3px;
+    background: rgba(255,255,255,0.5);
+    margin: 0 auto 24px;
+    border-radius: 2px;
+  }
+
+  .cover-toc-preview {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 14px;
+    opacity: 0.75;
+    line-height: 2;
+    text-align: left;
+    display: inline-block;
+    background: rgba(255,255,255,0.08);
+    padding: 12px 20px;
+    border-radius: 8px;
+    border-left: 3px solid rgba(255,255,255,0.4);
+  }
+
+  .cover-name {
+    font-family: 'Caveat', cursive;
+    font-size: 20px;
+    margin-top: 30px;
+    opacity: 0.8;
+    font-style: italic;
+  }
+
+  /* ===== TOC ===== */
+  .toc-section {
+    background: var(--paper-dark);
+    border-bottom: 3px solid var(--line);
+    padding: 30px 28px;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 31px, rgba(180,160,130,0.2) 31px, rgba(180,160,130,0.2) 32px);
+  }
+
+  .toc-title {
+    font-family: 'Caveat', cursive;
+    font-size: 28px;
+    color: var(--red);
+    margin-bottom: 16px;
+    border-bottom: 2px dashed var(--red);
+    padding-bottom: 8px;
+  }
+
+  .toc-list {
+    list-style: none;
+    columns: 1;
+  }
+
+  .toc-list li {
+    margin: 6px 0;
+  }
+
+  .toc-list a {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 15px;
+    color: var(--blue);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+
+  .toc-list a:hover {
+    background: var(--blue-hl);
+  }
+
+  .toc-list a .toc-num {
+    font-weight: 700;
+    color: var(--red);
+    min-width: 30px;
+  }
+
+  .toc-list a .toc-dots {
+    flex: 1;
+    border-bottom: 1px dotted var(--line);
+    margin: 0 6px;
+  }
+
+  /* ===== LECTURE SECTIONS ===== */
+  .lecture {
+    padding: 30px 28px 10px;
+    position: relative;
+    border-bottom: 2px solid var(--line);
+  }
+
+  .lecture-header {
+    margin-bottom: 24px;
+  }
+
+  .lecture-badge {
+    display: inline-block;
+    font-family: 'Caveat', cursive;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .badge-l0 { background: #2c3e50; color: white; }
+  .badge-l10 { background: #1a5276; color: white; }
+  .badge-l11 { background: #1e8449; color: white; }
+
+  .lecture-title {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(26px, 6vw, 38px);
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .lecture-subtitle {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 15px;
+    color: var(--ink-light);
+    font-style: italic;
+  }
+
+  /* ===== CONTENT COMPONENTS ===== */
+
+  h2 {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(22px, 4vw, 28px);
+    color: var(--red);
+    margin: 28px 0 12px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid var(--red);
+    position: relative;
+  }
+
+  h2::before {
+    content: '📌 ';
+    font-size: 18px;
+  }
+
+  h3 {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(18px, 3.5vw, 22px);
+    color: var(--blue);
+    margin: 22px 0 10px;
+    padding-left: 12px;
+    border-left: 4px solid var(--blue);
+  }
+
+  h4 {
+    font-family: 'Kalam', cursive;
+    font-size: 18px;
+    color: var(--purple);
+    margin: 18px 0 8px;
+  }
+
+  p {
+    margin-bottom: 12px;
+    line-height: 1.85;
+  }
+
+  /* ===== CALLOUT BOXES ===== */
+  .box {
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 18px 0;
+    position: relative;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.06);
+  }
+
+  .box-title {
+    font-family: 'Caveat', cursive;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .box-yellow {
+    background: var(--yellow-hl);
+    border: 2px solid #f0ad4e;
+  }
+
+  .box-yellow .box-title { color: #d35400; }
+
+  .box-blue {
+    background: var(--blue-hl);
+    border: 2px solid #3498db;
+  }
+
+  .box-blue .box-title { color: var(--blue); }
+
+  .box-green {
+    background: var(--green-hl);
+    border: 2px solid #27ae60;
+  }
+
+  .box-green .box-title { color: var(--green); }
+
+  .box-pink {
+    background: var(--pink-hl);
+    border: 2px solid #e91e63;
+  }
+
+  .box-pink .box-title { color: #c0392b; }
+
+  .box-dark {
+    background: #2c3e50;
+    color: white;
+    border: none;
+  }
+
+  .box-dark .box-title { color: #f39c12; }
+
+  /* ===== DANGER / WARNING ===== */
+  .danger {
+    background: #fdecea;
+    border: 2.5px solid #e53935;
+    border-left: 6px solid #e53935;
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-family: 'Kalam', cursive;
+  }
+
+  .danger::before {
+    content: '🚨 KHABARDAR! ';
+    font-weight: 700;
+    color: #c62828;
+    font-size: 15px;
+  }
+
+  /* ===== DIAGRAM / ASCII ART ===== */
+  .diagram {
+    background: #f8f6ff;
+    border: 2px solid #d1c4e9;
+    border-radius: 8px;
+    padding: 18px 16px;
+    margin: 16px 0;
+    overflow-x: auto;
+    font-family: 'Courier New', monospace;
+    font-size: clamp(11px, 2.5vw, 14px);
+    line-height: 1.6;
+    color: #2c1810;
+    white-space: pre;
+  }
+
+  /* ===== FORMULA BOX ===== */
+  .formula {
+    background: #fff8e1;
+    border: 2px dashed #f9a825;
+    border-radius: 8px;
+    padding: 14px 20px;
+    margin: 16px 0;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    font-size: clamp(14px, 3vw, 18px);
+    color: var(--ink);
+    overflow-x: auto;
+  }
+
+  /* ===== EXAMPLE BOX ===== */
+  .example {
+    background: white;
+    border: 2px solid #bdbdbd;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    box-shadow: 3px 3px 0 #e0e0e0;
+    position: relative;
+  }
+
+  .example::before {
+    content: '✏️ EXAMPLE';
+    position: absolute;
+    top: -12px;
+    left: 14px;
+    background: white;
+    padding: 0 8px;
+    font-family: 'Caveat', cursive;
+    font-size: 14px;
+    font-weight: 700;
+    color: #616161;
+  }
+
+  /* ===== HIGHLIGHT / UNDERLINE ===== */
+  .hl-yellow { background: #fff9c4; padding: 1px 4px; border-radius: 3px; }
+  .hl-red { background: #ffebee; padding: 1px 4px; border-radius: 3px; color: #c62828; font-weight: 700; }
+  .hl-green { background: #e8f5e9; padding: 1px 4px; border-radius: 3px; color: #2e7d32; font-weight: 700; }
+  .hl-blue { background: #e3f2fd; padding: 1px 4px; border-radius: 3px; color: #1565c0; font-weight: 700; }
+
+  /* ===== TABLE ===== */
+  .table-wrap { overflow-x: auto; margin: 16px 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 15px;
+    background: white;
+    box-shadow: 2px 2px 0 var(--shadow);
+  }
+
+  th {
+    background: #2c3e50;
+    color: white;
+    padding: 10px 14px;
+    text-align: left;
+    font-family: 'Caveat', cursive;
+    font-size: 17px;
+  }
+
+  td {
+    padding: 9px 14px;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+  }
+
+  tr:nth-child(even) td { background: #f5f5f5; }
+
+  /* ===== CODE ===== */
+  code {
+    font-family: 'Courier New', monospace;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 0.9em;
+    color: #c62828;
+  }
+
+  pre {
+    background: #2c3e50;
+    color: #ecf0f1;
+    border-radius: 8px;
+    padding: 16px 20px;
+    overflow-x: auto;
+    margin: 14px 0;
+    font-size: clamp(12px, 2.8vw, 14px);
+    font-family: 'Courier New', monospace;
+    line-height: 1.5;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.15);
+  }
+
+  /* ===== CHECKLIST ===== */
+  .checklist {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0;
+  }
+
+  .checklist li {
+    padding: 5px 0 5px 30px;
+    position: relative;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 16px;
+  }
+
+  .checklist li::before {
+    content: '☐';
+    position: absolute;
+    left: 4px;
+    color: var(--blue);
+    font-size: 18px;
+  }
+
+  .checklist li.done::before { content: '☑'; color: var(--green); }
+
+  /* ===== TIMELINE ===== */
+  .timeline {
+    border-left: 3px solid var(--line);
+    margin: 16px 0 16px 18px;
+    padding-left: 0;
+  }
+
+  .timeline-item {
+    position: relative;
+    padding: 0 0 18px 24px;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -9px;
+    top: 6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 3px solid var(--red);
+  }
+
+  .timeline-item .tl-title {
+    font-family: 'Caveat', cursive;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--red);
+  }
+
+  /* ===== COMPARISON CARDS ===== */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 16px 0;
+  }
+
+  @media (max-width: 500px) {
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+
+  .compare-card {
+    border-radius: 8px;
+    padding: 14px 16px;
+    border: 2px solid;
+  }
+
+  .compare-card h4 {
+    font-family: 'Caveat', cursive;
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .compare-card ul {
+    list-style: none;
+    padding: 0;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .compare-card ul li::before { content: '→ '; }
+
+  .card-left { background: #e3f2fd; border-color: #1565c0; }
+  .card-left h4 { color: #1565c0; }
+
+  .card-right { background: #e8f5e9; border-color: #2e7d32; }
+  .card-right h4 { color: #2e7d32; }
+
+  .card-red { background: #ffebee; border-color: #c62828; }
+  .card-red h4 { color: #c62828; }
+
+  .card-purple { background: #f3e5f5; border-color: #7b1fa2; }
+  .card-purple h4 { color: #7b1fa2; }
+
+  /* ===== STICKY NOTE ===== */
+  .sticky {
+    background: #fff9c4;
+    border: 1px solid #f9a825;
+    border-top: 6px solid #f9a825;
+    padding: 14px 16px;
+    margin: 16px 0;
+    border-radius: 0 8px 8px 8px;
+    box-shadow: 3px 4px 8px rgba(0,0,0,0.1);
+    transform: rotate(-0.5deg);
+    font-family: 'Kalam', cursive;
+    font-size: 15px;
+    position: relative;
+  }
+
+  .sticky.blue {
+    background: #e3f2fd;
+    border-color: #1565c0;
+    border-top-color: #1565c0;
+    transform: rotate(0.4deg);
+  }
+
+  .sticky.pink {
+    background: #fce4ec;
+    border-color: #c2185b;
+    border-top-color: #c2185b;
+    transform: rotate(-0.3deg);
+  }
+
+  /* ===== MEMORY BOX ===== */
+  .memory {
+    background: linear-gradient(135deg, #fff3e0, #fff8e1);
+    border: 3px solid #ff8f00;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin: 20px 0;
+    text-align: center;
+    box-shadow: 4px 4px 0 #ffcc02;
+  }
+
+  .memory-title {
+    font-family: 'Caveat', cursive;
+    font-size: 22px;
+    color: #e65100;
+    margin-bottom: 10px;
+  }
+
+  .memory pre {
+    background: none;
+    color: var(--ink);
+    box-shadow: none;
+    padding: 8px 0;
+    font-size: clamp(12px, 3vw, 15px);
+    text-align: left;
+    display: inline-block;
+  }
+
+  /* ===== STEP BOX ===== */
+  .steps {
+    counter-reset: step;
+    list-style: none;
+    padding: 0;
+    margin: 14px 0;
+  }
+
+  .steps li {
+    counter-increment: step;
+    padding: 10px 12px 10px 52px;
+    margin: 8px 0;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    position: relative;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 16px;
+    box-shadow: 1px 1px 0 #e0e0e0;
+  }
+
+  .steps li::before {
+    counter-increment: none;
+    content: counter(step);
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #2c3e50;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Caveat', cursive;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  /* ===== SECTION DIVIDER ===== */
+  .divider {
+    text-align: center;
+    margin: 30px 0 20px;
+    position: relative;
+  }
+
+  .divider::before {
+    content: '';
+    display: block;
+    border-top: 2px dashed var(--line);
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+  }
+
+  .divider span {
+    position: relative;
+    background: var(--paper);
+    padding: 0 16px;
+    font-family: 'Caveat', cursive;
+    font-size: 20px;
+    color: var(--ink-light);
+  }
+
+  /* ===== BACK TO TOP ===== */
+  .back-to-top {
+    position: fixed;
+    bottom: 22px;
+    right: 22px;
+    background: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 2px 2px 8px var(--shadow);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .back-to-top:hover { background: #c0392b; }
+
+  /* ===== MATH DISPLAY ===== */
+  .math-display {
+    text-align: center;
+    margin: 14px 0;
+    font-family: 'Courier New', monospace;
+    font-size: clamp(14px, 3.5vw, 20px);
+    background: #f8f9fa;
+    padding: 14px;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    overflow-x: auto;
+  }
+
+  /* ===== CONFUSION SECTION ===== */
+  .confusion {
+    background: linear-gradient(135deg, #fce4ec, #fff8e1);
+    border: 2px solid #f48fb1;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin: 18px 0;
+  }
+
+  .confusion-title {
+    font-family: 'Caveat', cursive;
+    font-size: 22px;
+    color: #c62828;
+    margin-bottom: 12px;
+  }
+
+  /* ===== FLOW CHART ===== */
+  .flowchart {
+    background: #fafafa;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 16px 0;
+    overflow-x: auto;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 15px;
+  }
+
+  .flow-node {
+    display: inline-block;
+    background: white;
+    border: 2px solid;
+    border-radius: 8px;
+    padding: 8px 16px;
+    margin: 4px;
+    font-family: 'Kalam', cursive;
+    font-size: 15px;
+  }
+
+  .flow-node.blue { border-color: #1565c0; color: #1565c0; background: #e3f2fd; }
+  .flow-node.red { border-color: #c62828; color: #c62828; background: #ffebee; }
+  .flow-node.green { border-color: #2e7d32; color: #2e7d32; background: #e8f5e9; }
+  .flow-node.orange { border-color: #e65100; color: #e65100; background: #fff3e0; }
+  .flow-node.purple { border-color: #7b1fa2; color: #7b1fa2; background: #f3e5f5; }
+
+  .flow-arrow {
+    text-align: center;
+    font-size: 22px;
+    color: var(--ink-light);
+    margin: 4px 0;
+    line-height: 1;
+  }
+
+  /* ===== ANSWER BOX ===== */
+  .answer-box {
+    background: #2c3e50;
+    color: #ecf0f1;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    font-family: 'Kalam', cursive;
+  }
+
+  .answer-box .ans-q {
+    color: #f39c12;
+    font-family: 'Caveat', cursive;
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+
+  /* ===== PILLAR GRID ===== */
+  .pillar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  .pillar {
+    border-radius: 10px;
+    padding: 16px 12px;
+    text-align: center;
+    border: 2px solid;
+  }
+
+  .pillar .pillar-icon { font-size: 30px; margin-bottom: 8px; }
+  .pillar .pillar-title {
+    font-family: 'Caveat', cursive;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .pillar p { font-size: 13px; font-family: 'Patrick Hand', cursive; margin: 0; }
+
+  /* ===== QUIZ BOX ===== */
+  .quiz {
+    background: var(--paper-dark);
+    border: 2px solid var(--line);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+
+  .quiz-title {
+    font-family: 'Caveat', cursive;
+    font-size: 24px;
+    color: #2c3e50;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .quiz ol {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 15px;
+    line-height: 2;
+    padding-left: 20px;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 600px) {
+    .lecture { padding: 20px 16px 8px; }
+    .toc-section { padding: 20px 16px; }
+    .notebook::before { display: none; }
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ===== SCROLL PROGRESS ===== */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #c0392b, #e74c3c);
+    z-index: 999;
+    transition: width 0.1s;
+    width: 0%;
+  }
+
+  /* ===== SPECIAL EMPHASIS ===== */
+  .mega-point {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(20px, 5vw, 28px);
+    font-weight: 700;
+    color: var(--red);
+    text-align: center;
+    border: 3px double var(--red);
+    padding: 16px 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    background: #fff5f5;
+  }
+
+  .gold-line {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(20px, 5vw, 26px);
+    font-weight: 700;
+    color: #b7791f;
+    text-align: center;
+    background: linear-gradient(135deg, #fff9c4, #fef3c7);
+    border: 2px solid #f59e0b;
+    padding: 16px 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    box-shadow: 3px 3px 0 #f59e0b;
+  }
+
+  /* ===== MARKER EFFECT ===== */
+  .marker {
+    background: linear-gradient(180deg, transparent 40%, rgba(255, 230, 0, 0.6) 40%);
+    padding: 0 2px;
+  }
+
+  /* ===== MATRIX ===== */
+  .matrix {
+    font-family: 'Courier New', monospace;
+    font-size: clamp(13px, 3vw, 17px);
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 14px 20px;
+    margin: 14px 0;
+    display: inline-block;
+    text-align: center;
+    overflow-x: auto;
+    max-width: 100%;
+  }
+
+</style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="notebook">
+
+<!-- ===== COVER ===== -->
+<div class="cover" id="top">
+  <div class="cover-subject">Applied Machine Learning</div>
+  <div class="cover-title">🧠 AML Notes</div>
+  <div class="cover-sub">Lecture 0 → Lecture 11 · Hinglish mein</div>
+  <div class="cover-divider"></div>
+
+
+</div>
+
+<!-- ===== TABLE OF CONTENTS ===== -->
+<div class="toc-section" id="toc">
+  <div class="toc-title">📚 Table of Contents</div>
+  <ul class="toc-list">
+    <li><a href="#lec0"><span class="toc-num">L0</span><span>AI, ML, DL — Foundation</span><span class="toc-dots"></span><span>↓</span></a></li>
+    <li><a href="#trad"><span class="toc-num">L0.1</span><span>Traditional Programming</span><span class="toc-dots"></span><span>↓</span></a></li>
+    <li><a href="#ai"><span class="toc-num">L0.2</span><span>Artificial Intelligence</span><span class="toc-dots"></span><span>↓</span></a></li>
+    <li><a href="#ml"><span class="toc-num">L0.3</span><span>Machine Learning</span><span class="toc-dots"></span><span>↓</span></a></li>
+    <li><a href="#dl"><span class="toc-num">L0.4</span><span>Deep Learning</span><span class="toc-dots"></span><span>↓</span></a></li>
+    <li><a href="#data"><span class="toc-num">L0.5</span><span>Labelled vs Unlabelled Data</span><span class="toc-dots"></span><span>↓</span></a></li>
+    <li><a href="#paradigms"><span class="toc-num">L0.6</span><span>4 Learning Paradigms</span><span class="toc-dots"></span><span>↓</span></a></li>
+    <li><a href="#tasks"><span class="toc-num">L0.7</span><span>Tasks: Regression, Classification, Clustering</span><span class="toc-dots"></span><span>↓</span></a></li>
+    <li><a href="#confusions"><span class="toc-num">L0.8</span><span>5 Common Confusions</span><span class="toc-dots"></span><span>↓</span></a></li>
+    <li><a href="#lec10"><span class="toc-num">L10</span><span>Feature Selection</span><span class="toc-dots"></span><span>↓</span></a></li>
+    <li><a href="#filter"><span class="toc-num">L10.1</span><span>Filter Methods</span><span class="toc-dots"></span><span>↓</span></a></li>
+    <li><a href="#wrapper"><span class="toc-num">L10.2</span><span>Wrapper Methods</span><span class="toc-dots"></span><span>↓</span></a></li>
+    <li><a href="#leakage10"><span class="toc-num">L10.3</span><span>Data Leakage</span><span class="toc-dots"></span><span>↓</span></a></li>
+    <li><a href="#lec11"><span class="toc-num">L11</span><span>Dimensionality Reduction & PCA</span><span class="toc-dots"></span><span>↓</span></a></li>
+    <li><a href="#pca-math"><span class="toc-num">L11.1</span><span>PCA Mathematics</span><span class="toc-dots"></span><span>↓</span></a></li>
+    <li><a href="#pca-example"><span class="toc-num">L11.2</span><span>PCA Numerical Example</span><span class="toc-dots"></span><span>↓</span></a></li>
+    <li><a href="#pca-choose-k"><span class="toc-num">L11.3</span><span>Choosing k</span><span class="toc-dots"></span><span>↓</span></a></li>
+    <li><a href="#pca-fail"><span class="toc-num">L11.4</span><span>When PCA Fails</span><span class="toc-dots"></span><span>↓</span></a></li>
+    <li><a href="#mega-summary"><span class="toc-num">★</span><span>Mega Summary & Cheat Sheet</span><span class="toc-dots"></span><span>↓</span></a></li>
+  </ul>
+</div>
+
+
+<!-- ======================================================= -->
+<!-- LECTURE 0 -->
+<!-- ======================================================= -->
+<div class="lecture" id="lec0">
+  <div class="lecture-header">
+    <div class="lecture-badge badge-l0">Lecture 0</div>
+    <div class="lecture-title">🧠 Setting the Foundation<br>AI · ML · DL</div>
+    <div class="lecture-subtitle">Poori ML journey ka shuruwaat — bilkul zero se</div>
+  </div>
+
+  <!-- MENTAL MAP -->
+  <div class="box box-yellow">
+    <div class="box-title">🗺️ Sabse pehle — Ek Giant Mental Map</div>
+    <p>Yeh map dimaag mein chipka lo. Isko samajhne ke baad baaki sab automatically click karega.</p>
+  </div>
+
+  <div class="diagram">                    ARTIFICIAL INTELLIGENCE (AI)
+                              │
+           ┌──────────────────┼──────────────────┐
+           │                  │                  │
+        Search             Machine           Robotics
+      (Routes,            Learning          (Drones,
+      Algorithms)            │              Robots)
+                             │
+                         DEEP LEARNING
+                    (Neural Network based)</div>
+
+  <div class="sticky">
+    💡 <strong>Simple yaad karo:</strong><br>
+    AI = Sabka Baap (Umbrella) 🏠<br>
+    ML = AI ke andar ek major approach 🚪<br>
+    DL = ML ke andar deep neural nets 🔮
+  </div>
+
+  <p>Aur doosri side — <strong>DATA ke basis pe learning:</strong></p>
+
+  <div class="diagram">         DATA
+          │
+          ├── Labelled (answer pata hai)
+          │       └── Supervised Learning
+          │               ├── Regression
+          │               └── Classification
+          │
+          └── Unlabelled (answer nahi pata)
+                  └── Unsupervised Learning
+                          └── Clustering
+
+  + Semi-Supervised
+  + Reinforcement Learning</div>
+
+  <div class="box box-blue">
+    <div class="box-title">🎯 Yeh Do "Trees" Alag Cheez Poochh Rahe Hain!</div>
+    <p><strong>Pehla tree:</strong> <span class="hl-blue">Machine ko learn KAISE karwa rahe ho?</span> (AI → ML → DL)</p>
+    <p><strong>Doosra tree:</strong> <span class="hl-green">Machine se karwana KYA hai?</span> (Regression, Classification, Clustering)</p>
+    <p>Yeh distinction bahut important hai — aadhi confusion isi se bachegi!</p>
+  </div>
+</div>
+
+
+<!-- PART 1: TRADITIONAL PROGRAMMING -->
+<div class="lecture" id="trad">
+  <h2>Part 1 — Traditional Programming</h2>
+
+  <h3>Sabse pehle: Programming hoti kya hai?</h3>
+  <p>Bilkul basic level se shuru karte hain. Suppose tum computer ko bolna chahte ho:</p>
+
+  <div class="example">
+    "Agar student ka score 40 se zyada hai toh PASS, warna FAIL."
+    <br><br>
+    Computer khud se nahi jaanta:<br>
+    ❌ Score kya hai<br>
+    ❌ PASS ka matlab kya hai<br>
+    ❌ 40 kyun threshold hai<br>
+    ❌ Output PASS/FAIL kyun hona chahiye<br>
+    <br>
+    Tumhe explicitly batana padta hai:
+    <pre>if marks >= 40:
+    result = "PASS"
+else:
+    result = "FAIL"</pre>
+    <strong>Yahan logic tumne banaya. Computer bas execute kar raha hai.</strong>
+  </div>
+
+  <h3>Abstract Picture — Traditional Programming</h3>
+
+  <div class="diagram">           HUMAN
+             │
+             │ writes rules manually
+             ▼
+      ┌───────────────────┐
+Data  │   PROGRAM         │  →  Answer
+ →    │  (Rules + Logic)  │
+      └───────────────────┘
+
+  Formula:  DATA + RULES  →  ANSWERS</div>
+
+  <div class="gold-line">Traditional Programming: DATA + RULES → ANSWERS</div>
+
+  <h3>"Rule" ka matlab kya hota hai?</h3>
+  <p>Rule = computer ko diya gaya decision logic.</p>
+
+  <div class="example">
+    Age > 18  → Adult<br>
+    Age ≤ 18  → Minor<br><br>
+    Temperature > 38°C  → Fever<br>
+    Temperature ≤ 38°C  → Normal
+  </div>
+
+  <h3>Spam Example — Yahin se ML ki Zarurat Samjho!</h3>
+
+  <p>Tumne program banaya:</p>
+  <pre>if "FREE" in email:
+    spam = True</pre>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="tl-title">Spammer likhta hai: "Get your FR33 crypto reward!"</div>
+      <p>Tumhara rule "FREE" search karta tha. "FR33" mein FREE nahi → Program bolta hai: <strong>Not Spam!</strong> 😱</p>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-title">Tum patch karte ho:</div>
+      <pre>if "FREE" or "FR33" in email:</pre>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-title">Spammer phir likhta hai: "F-R-E-E crypto deal"</div>
+      <p>Phir se escape! Phir patch. Yeh loop kabhi khatam nahi hoga.</p>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-title">Spammer: "Congratulations!!! Claim your reward..."</div>
+      <p>No FREE, no FR33 — phir bhi spam hai! Par rule nahi pakad sakta.</p>
+    </div>
+  </div>
+
+  <div class="danger">
+    Yeh "programmer ne enough if-else nahi likhe" wali problem nahi hai. Deep problem hai: <strong>Computer ko actual underlying pattern nahi pata!</strong>
+  </div>
+
+  <h3>Fundamental Problem</h3>
+  <div class="compare-grid">
+    <div class="compare-card card-left">
+      <h4>Traditional Programming</h4>
+      <ul>
+        <li>Human fixed rules likhta hai</li>
+        <li>World changes → rules outdated</li>
+        <li>Edge cases infinite hain</li>
+        <li>Computer knows only what you wrote</li>
+      </ul>
+    </div>
+    <div class="compare-card card-red">
+      <h4>Real World</h4>
+      <ul>
+        <li>Unknown complexity</li>
+        <li>Infinite edge cases</li>
+        <li>Patterns change over time</li>
+        <li>Human can't write every rule</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>"Structurally Rigid" ka Matlab</h3>
+  <div class="example">
+    Rule: <code>if rain > 50mm: delay_delivery</code>
+    <br><br>
+    But kya hoga agar:<br>
+    → Rain sirf 35mm hai but roads flooded hain?<br>
+    → Snow hai?<br>
+    → Traffic jam hai?<br>
+    → Bridge broken hai?<br>
+    → Strike hai?<br>
+    <br>
+    <strong>Program ne ye rules explicitly nahi dekhe → Problem!</strong>
+  </div>
+
+  <h3>Best Analogy 🍳</h3>
+  <div class="box box-green">
+    <div class="box-title">🍳 Idiot-Proof Recipe</div>
+    <p>1. Take 2 eggs<br>2. Add 100g flour<br>3. Mix for 3 minutes<br>4. Bake at 180°C</p>
+    <p>Computer bolega: "Jo likha hai woh karunga."</p>
+    <p>Computer khud nahi sochega: <em>"Hmm batter thoda dry hai, shayad aur milk chahiye."</em></p>
+    <p>→ <strong>Intelligence rule-writing side pe hai, execution machine karti hai.</strong></p>
+  </div>
+</div>
+
+
+<!-- PART 2: AI -->
+<div class="lecture" id="ai">
+  <h2>Part 2 — Artificial Intelligence (AI)</h2>
+
+  <h3>AI Actually Kya Hai?</h3>
+  <p>AI = broad umbrella field jo systems banata hai jo <span class="hl-yellow">human-like intelligence mimic kar sakein</span> — jaise reasoning, problem solving, perception, autonomous decision-making.</p>
+
+  <div class="pillar-grid">
+    <div class="pillar" style="background:#e3f2fd; border-color:#1565c0;">
+      <div class="pillar-icon">🗺️</div>
+      <div class="pillar-title" style="color:#1565c0;">Search</div>
+      <p>Routes, paths, game trees</p>
+    </div>
+    <div class="pillar" style="background:#e8f5e9; border-color:#2e7d32;">
+      <div class="pillar-icon">🤖</div>
+      <div class="pillar-title" style="color:#2e7d32;">Machine Learning</div>
+      <p>Data se patterns learn karna</p>
+    </div>
+    <div class="pillar" style="background:#f3e5f5; border-color:#7b1fa2;">
+      <div class="pillar-icon">🦾</div>
+      <div class="pillar-title" style="color:#7b1fa2;">Robotics</div>
+      <p>Physical world mein act karna</p>
+    </div>
+    <div class="pillar" style="background:#fff3e0; border-color:#e65100;">
+      <div class="pillar-icon">💬</div>
+      <div class="pillar-title" style="color:#e65100;">NLP</div>
+      <p>Language understand karna</p>
+    </div>
+    <div class="pillar" style="background:#fce4ec; border-color:#c2185b;">
+      <div class="pillar-icon">👁️</div>
+      <div class="pillar-title" style="color:#c2185b;">Computer Vision</div>
+      <p>Images/videos samajhna</p>
+    </div>
+  </div>
+
+  <h3>Intelligence = Sirf "Learning" Nahi!</h3>
+
+  <div class="box box-blue">
+    <div class="box-title">🗺️ Google Maps Example</div>
+    <p>Google Maps ko route find karna hai:</p>
+    <div class="diagram">A → B → C → D
+A → E → F → D
+A → G → H → I → D
+... (bahut saare options)</div>
+    <p>Yeh search through possibilities karta hai aur optimize karta hai. Iske liye necessarily "model ne millions of labelled examples se learn kiya" zaroori nahi!</p>
+    <p>Isliye: <strong class="hl-yellow">AI broader hai than ML.</strong></p>
+  </div>
+
+  <div class="memory">
+    <div class="memory-title">🧠 AI Goal Analogy</div>
+    <pre>AI  = "I want a machine that BEHAVES intelligently."
+ML  = "Let's make it LEARN patterns from data."
+DL  = "Let's use DEEP NEURAL NETWORKS to do that."
+
+So:
+AI  = Destination  🏁
+ML  = One major route  🛣️
+DL  = Specialized route inside ML  🏎️</pre>
+  </div>
+</div>
+
+
+<!-- PART 3: ML -->
+<div class="lecture" id="ml">
+  <h2>Part 3 — Machine Learning</h2>
+
+  <h3>Traditional Programming vs ML — The Flip!</h3>
+
+  <div class="compare-grid">
+    <div class="compare-card card-left">
+      <h4>Traditional</h4>
+      <pre style="font-size:13px; background:#e3f2fd; box-shadow:none; padding:10px; color:#1565c0;">RULES
+  +
+DATA
+  ↓
+COMPUTER
+  ↓
+ANSWER</pre>
+    </div>
+    <div class="compare-card card-green">
+      <h4>Machine Learning</h4>
+      <pre style="font-size:13px; background:#e8f5e9; box-shadow:none; padding:10px; color:#2e7d32;">DATA
+  +
+CORRECT ANSWERS
+  ↓
+ML ALGORITHM
+  ↓
+LEARNED PATTERN
+  ↓
+NEW DATA → PREDICTION</pre>
+    </div>
+  </div>
+
+  <div class="gold-line">⭐ Lecture 0 ki GOLD LINE:<br>Traditional: Data + Rules → Answers<br>Machine Learning: Data + Answers → Rules/Patterns</div>
+
+  <h3>"Data + Answers → Rules" ka Actual Matlab</h3>
+
+  <div class="example">
+    Mere paas 10,000 emails hain. Har email ke saath answer bhi hai:<br><br>
+    Email 1 → <span class="hl-red">Spam</span><br>
+    Email 2 → <span class="hl-green">Not Spam</span><br>
+    Email 3 → <span class="hl-red">Spam</span><br>
+    ...<br><br>
+    Computer dekhega: Email content, sender, words, links, format, frequency, etc.<br><br>
+    Phir algorithm mathematical patterns discover karega, jaise:<br>
+    → Certain word patterns → ↑ spam probability<br>
+    → Suspicious URLs → ↑<br>
+    → Normal workplace signatures → ↓<br><br>
+    <strong>Programmer manually har rule nahi likh raha! Model training data se patterns learn karta hai.</strong>
+  </div>
+
+  <h3>"Learning" ka Matlab Computer Conscious Hona Nahi Hai!</h3>
+
+  <div class="sticky pink">
+    🧠 Machine Learning mein "learning" ka matlab:<br>
+    <strong>"Given data ke basis par mathematical parameters adjust karna so that some objective improve ho."</strong><br><br>
+    ML ka learning ultimately <strong>mathematical optimization</strong> hai!
+  </div>
+
+  <h3>Microscopic Example — Hours Study vs Exam Score</h3>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>Hours Studied</th><th>Exam Score</th></tr>
+      <tr><td>1</td><td>35</td></tr>
+      <tr><td>2</td><td>45</td></tr>
+      <tr><td>3</td><td>52</td></tr>
+      <tr><td>4</td><td>65</td></tr>
+      <tr><td>5</td><td>72</td></tr>
+    </table>
+  </div>
+
+  <p>Human bhi aur ML algorithm bhi examples se ek relationship learn kar sakta hai. Phir:</p>
+  <div class="example">
+    Input: 6 hours → Model prediction ≈ some score<br><br>
+    Yahan model ne <strong>future case ke liye generalization ki!</strong>
+  </div>
+
+  <h3>🔑 GENERALIZATION — Sabse Important Word</h3>
+  <div class="box box-yellow">
+    <div class="box-title">💡 Generalization Kya Hai?</div>
+    <p>Model ka objective training examples ko <strong>ratta maarna nahi hai.</strong></p>
+    <p>Usko seekhna hai: <span class="hl-yellow">"Underlying pattern kya hai jo NAYE examples pe bhi kaam kare?"</span></p>
+    <p>Agar model bas past examples yaad kar le → <strong>Memorization (Overfitting)</strong> → New data pe fail!</p>
+  </div>
+
+  <div class="diagram">    PAST DATA
+        ↓
+    TRAINING
+        ↓
+    LEARN PATTERN
+        ↓
+    NEW / UNSEEN DATA
+        ↓
+    PREDICTION</div>
+</div>
+
+
+<!-- PART 4: DEEP LEARNING -->
+<div class="lecture" id="dl">
+  <h2>Part 4 — Deep Learning</h2>
+
+  <h3>Structured vs Unstructured Data</h3>
+
+  <div class="compare-grid">
+    <div class="compare-card card-green">
+      <h4>Structured Data ✅</h4>
+      <p style="font-family:'Patrick Hand',cursive; font-size:14px;">Information columns mein organized hoti hai:</p>
+      <ul>
+        <li>CGPA: 8.2</li>
+        <li>IQ: 120</li>
+        <li>Projects: 3</li>
+        <li>Attendance: 92%</li>
+      </ul>
+      <p style="font-family:'Patrick Hand',cursive; font-size:13px; margin-top:8px;">Traditional ML algorithms iske saath naturally kaam karte hain.</p>
+    </div>
+    <div class="compare-card card-red">
+      <h4>Unstructured Data ❌</h4>
+      <ul>
+        <li>Images (pixel grids)</li>
+        <li>Audio signals</li>
+        <li>Raw text</li>
+        <li>Video frames</li>
+      </ul>
+      <p style="font-family:'Patrick Hand',cursive; font-size:13px; margin-top:8px;">Direct features define karna mushkil hota hai!</p>
+    </div>
+  </div>
+
+  <h3>Image Problem — Computer ke liye Kya Dikhta Hai?</h3>
+
+  <div class="example">
+    Cat image dekhte ho tum: 🐱<br><br>
+    Computer ke liye image ultimately numbers ka grid:
+    <div class="diagram" style="font-size:13px;">┌───────────────────┐
+│ 0   12  28  91   │
+│ 3   18  75  120  │  ← Sirf numbers!
+│ 45  88  99  77   │
+│ 12  34  56  21   │
+└───────────────────┘</div>
+    Computer ko "cat" directly nahi dikhta. Usko numbers milte hain.
+  </div>
+
+  <h3>Feature Engineering ka Bottleneck</h3>
+
+  <div class="compare-grid">
+    <div class="compare-card card-left">
+      <h4>Traditional ML</h4>
+      <pre style="font-size:12px; background:#e3f2fd; box-shadow:none; padding:8px; color:#1565c0;">Image
+  ↓
+Human designs features:
+- edges?
+- shapes?
+- textures?
+- corners?
+  ↓
+ML Model
+  ↓
+Cat/Dog</pre>
+      <p style="font-family:'Patrick Hand',cursive; font-size:13px;">→ Feature engineering bottleneck!</p>
+    </div>
+    <div class="compare-card card-green">
+      <h4>Deep Learning</h4>
+      <pre style="font-size:12px; background:#e8f5e9; box-shadow:none; padding:8px; color:#2e7d32;">RAW IMAGE
+  ↓
+Neural Network
+  ↓
+Layer 1: edges, lines
+  ↓
+Layer 2: shapes, parts
+  ↓
+Layer 3: face/body
+  ↓
+CAT! 🐱</pre>
+      <p style="font-family:'Patrick Hand',cursive; font-size:13px;">→ Automatic representation learning!</p>
+    </div>
+  </div>
+
+  <h3>"Deep" Ka Matlab Kya Hai?</h3>
+  <div class="box box-blue">
+    <div class="box-title">📚 Simple Answer</div>
+    <p><strong>Deep = Multiple Layers.</strong></p>
+    <div class="diagram" style="font-size:13px;">Input
+  ↓ Layer 1
+  ↓ Layer 2
+  ↓ Layer 3
+  ↓ Layer 4
+  ↓ Layer 5
+Output</div>
+    <p>Har layer representation ko progressively transform kar sakti hai.</p>
+  </div>
+
+  <div class="mega-point">DL ⊂ ML ⊂ AI</div>
+
+  <div class="box box-yellow">
+    <div class="box-title">⚠️ Yeh Mat Sochna!</div>
+    <p>ML = old technology, DL = totally different field</p>
+    <p>Actually: <strong>Deep Learning, Machine Learning ke andar hai!</strong> DL sirf neural-network based methods hain.</p>
+  </div>
+</div>
+
+
+<!-- PART 5: LABELLED vs UNLABELLED -->
+<div class="lecture" id="data">
+  <h2>Part 5 — Labelled vs Unlabelled Data</h2>
+
+  <h3>Ek Aur Important Axis</h3>
+  <p>Question: Machine ke paas data hai, lekin kya correct answer bhi diya hua hai? <strong>Yeh decide karta hai learning setup!</strong></p>
+
+  <div class="compare-grid">
+    <div class="compare-card card-green">
+      <h4>✅ Labelled Data</h4>
+      <p style="font-family:'Patrick Hand',cursive; font-size:14px;">Input + Ground Truth Answer</p>
+      <pre style="font-size:12px; background:#e8f5e9; box-shadow:none; padding:8px; color:#2e7d32;">X               Y (Label)
+image1    →    Cat
+image2    →    Dog
+image3    →    Cat</pre>
+      <p style="font-family:'Patrick Hand',cursive; font-size:13px;">Yahan Y = label hai</p>
+    </div>
+    <div class="compare-card card-red">
+      <h4>❌ Unlabelled Data</h4>
+      <p style="font-family:'Patrick Hand',cursive; font-size:14px;">Sirf Input, koi answer nahi</p>
+      <pre style="font-size:12px; background:#ffebee; box-shadow:none; padding:8px; color:#c62828;">image1    →    ?
+image2    →    ?
+image3    →    ?</pre>
+      <p style="font-family:'Patrick Hand',cursive; font-size:13px;">No labels!</p>
+    </div>
+  </div>
+
+  <h3>Ground Truth Kya Hota Hai?</h3>
+  <div class="box box-blue">
+    <div class="box-title">💡 Simple Definition</div>
+    <p>"Ground truth" = Correct/reference answer jo hum target maante hain.</p>
+    <div class="example">
+      Question: 2 + 2 = ?<br>
+      Ground truth: <strong>4</strong><br><br>
+      ML Example:<br>
+      Image → Cat<br>
+      Ground truth = <strong>"Cat"</strong>
+    </div>
+  </div>
+
+  <h3>Labels Expensive Kyun Hote Hain?</h3>
+  <div class="example">
+    Suppose: 200,000 X-rays.<br><br>
+    Machine ke paas: X-ray1, X-ray2, X-ray3, ...<br><br>
+    But correct diagnosis automatically available nahi!<br><br>
+    Radiologist ko inspect karke label karna padega:<br>
+    X-ray1 → <span class="hl-red">abnormal</span><br>
+    X-ray2 → <span class="hl-green">normal</span><br><br>
+    <strong>Domain expertise expensive hai!</strong> Isi motivation se semi-supervised learning useful hoti hai.
+  </div>
+</div>
+
+
+<!-- PART 6: 4 PARADIGMS -->
+<div class="lecture" id="paradigms">
+  <h2>Part 6 — Char Learning Paradigms</h2>
+
+  <!-- SUPERVISED -->
+  <h3>1. Supervised Learning 👩‍🏫</h3>
+
+  <div class="sticky">
+    Naam se intuition: <strong>"Teacher hai!"</strong> Teacher tumhe question ke saath correct answer bhi de raha hai.
+  </div>
+
+  <div class="example">
+    House = 1200 sq ft  →  ₹70 lakh<br>
+    House = 1800 sq ft  →  ₹1 crore<br>
+    House = 900 sq ft   →  ₹50 lakh<br><br>
+    <strong>Model ka goal:</strong> Input → Output  →  f(X) ≈ Y<br><br>
+    New example: 1500 sq ft → Model predicts price!
+  </div>
+
+  <div class="diagram">    DATA + CORRECT ANSWERS
+             ↓
+           MODEL
+             ↓
+        learn mapping
+        (X → Y)</div>
+
+  <!-- UNSUPERVISED -->
+  <h3>2. Unsupervised Learning 🧭</h3>
+
+  <div class="sticky blue">
+    Ab teacher chala gaya 😭 No answers. Lekin algorithm khud similarities discover karta hai!
+  </div>
+
+  <div class="example">
+    Customer A → purchase pattern<br>
+    Customer B → purchase pattern<br>
+    Customer C → purchase pattern<br>
+    ...<br><br>
+    Nobody tells model: "Ye premium customer hai."<br><br>
+    Algorithm discover kare:
+    <div class="diagram" style="font-size:13px;">       ● ● ●
+     ● ● ●               → Cluster 1
+
+               ▲ ▲ ▲
+             ▲ ▲ ▲       → Cluster 2
+
+  ■ ■
+   ■ ■ ■               → Cluster 3</div>
+    Without being told category names beforehand!
+  </div>
+
+  <!-- SEMI-SUPERVISED -->
+  <h3>3. Semi-Supervised Learning 🎭</h3>
+
+  <div class="sticky pink">
+    Part-time teacher 😅 — Kuch labelled data + bahut saara unlabelled data
+  </div>
+
+  <div class="example">
+    10,000 images total:<br>
+    → 100 labelled ✅<br>
+    → 9,900 unlabelled ❓<br><br>
+    Labelling expensive hai, toh:<br>
+    small labelled dataset + huge unlabelled dataset → model!<br><br>
+    <strong>Google Photos example:</strong><br>
+    Photos → similar faces cluster → tum ek identity provide karo → system baaki related images associate kar leta hai!
+  </div>
+
+  <!-- REINFORCEMENT LEARNING -->
+  <h3>4. Reinforcement Learning 🎮</h3>
+
+  <div class="box box-yellow">
+    <div class="box-title">⚠️ RL ko Supervised se mix mat karna!</div>
+    <p>RL mein koi teacher nahi deta ki "when wind = 30 km/h, rotor A ko 17° rotate karo."</p>
+  </div>
+
+  <div class="diagram">       ┌──────────────┐
+       │    AGENT     │  (Drone/Player/Robot)
+       └──────┬───────┘
+              │ takes ACTION
+              ▼
+       ┌──────────────┐
+       │ ENVIRONMENT  │  (World)
+       └──────┬───────┘
+              │
+       state + reward/penalty
+              │
+              └──────────► AGENT learns!</div>
+
+  <div class="example">
+    Drone moves left → crashes → -10 reward 😢<br>
+    Drone stabilizes → reaches destination → +100 reward 🎉<br><br>
+    Over many interactions: agent tries to learn which actions lead to better cumulative rewards.
+  </div>
+
+  <div class="box box-blue">
+    <div class="box-title">🔑 RL ≠ "No Data"</div>
+    <p>RL static pre-collected dataset pe dependent nahi hai. Agent environment se interact karke apna feedback generate karta hai!</p>
+    <p><strong>Supervised:</strong> Dataset → learn<br>
+    <strong>Unsupervised:</strong> Dataset → discover<br>
+    <strong>RL:</strong> Interact → experience → feedback → learn</p>
+  </div>
+
+  <!-- SUMMARY TABLE -->
+  <h3>4 Paradigms — One Table</h3>
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Paradigm</th>
+        <th>Labels?</th>
+        <th>Main Idea</th>
+        <th>Memory Trick</th>
+      </tr>
+      <tr>
+        <td><strong>Supervised</strong></td>
+        <td>✅ Haan</td>
+        <td>Correct answer dekar mapping learn</td>
+        <td>SUPER = Teacher</td>
+      </tr>
+      <tr>
+        <td><strong>Unsupervised</strong></td>
+        <td>❌ Nahi</td>
+        <td>Hidden structure discover</td>
+        <td>UN = No Teacher</td>
+      </tr>
+      <tr>
+        <td><strong>Semi-supervised</strong></td>
+        <td>Some ✅ + lots ❌</td>
+        <td>Limited labels + lots of raw data</td>
+        <td>SEMI = Part-time Teacher</td>
+      </tr>
+      <tr>
+        <td><strong>Reinforcement</strong></td>
+        <td>❌ traditional labels nahi</td>
+        <td>Actions + rewards/penalties</td>
+        <td>RL = Game ka reward system</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+
+<!-- PART 7: TASKS -->
+<div class="lecture" id="tasks">
+  <h2>Part 7 — Tasks: Machine Se Actually Karwana Kya Hai?</h2>
+
+  <h3>Regression — "Kitna?"</h3>
+  <div class="box box-green">
+    <div class="box-title">📊 Regression = Continuous Numerical Value Predict Karna</div>
+    <p><strong>Keywords:</strong> "Kitna?", "Kitne?", "What value?"</p>
+    <p><strong>Examples:</strong><br>
+    House price = ₹83.2 lakh<br>
+    Temperature = 31.7°C<br>
+    Salary = ₹1,27,500</p>
+    <p>Output is a NUMBER!</p>
+  </div>
+
+  <div class="example">
+    Input: CGPA + IQ + Projects<br>
+           ↓<br>
+         MODEL<br>
+           ↓<br>
+         <strong>₹56.7k</strong> (numerical prediction)
+  </div>
+
+  <div class="sticky">
+    ⚠️ <strong>Regression ≠ Only Linear Regression!</strong><br>
+    Regression = Task hai. Linear Regression = Ek algorithm hai.<br>
+    Regression ke under: Linear Regression, Decision Tree Regression, Random Forest Regression, SVR, ...
+  </div>
+
+  <h3>Classification — "Kaunsi Category?"</h3>
+  <div class="box box-blue">
+    <div class="box-title">🏷️ Classification = Predefined Category Predict Karna</div>
+    <p><strong>Examples:</strong><br>
+    Spam / Not Spam<br>
+    Cat / Dog / Fox<br>
+    Disease / No Disease<br>
+    Fraud / Not Fraud</p>
+    <p>Output = CATEGORY (discrete, not continuous)</p>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card card-left">
+      <h4>Binary Classification</h4>
+      <ul>
+        <li>Sirf 2 classes</li>
+        <li>Spam / Not Spam</li>
+        <li>Pass / Fail</li>
+      </ul>
+    </div>
+    <div class="compare-card card-purple">
+      <h4>Multiclass Classification</h4>
+      <ul>
+        <li>2 se zyada classes</li>
+        <li>Cat / Dog / Fox</li>
+        <li>A / B / C / D</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Clustering — "Natural Groups Kya Hain?"</h3>
+  <div class="box box-yellow">
+    <div class="box-title">🔵 Clustering = Khud Groups Discover Karna (No Predefined Labels)</div>
+    <p>Suppose customer features: spending, frequency, average order</p>
+    <div class="diagram" style="font-size:13px;">       ● ● ●
+      ● ● ●           → Group A (shayad premium users)
+
+                  ▲ ▲ ▲
+                ▲ ▲ ▲     → Group B (shayad students)
+
+   ■ ■
+    ■ ■ ■             → Group C (shayad occasional buyers)</div>
+    <p><strong>Tumne pehle se nahi bola "A = rich people" — algorithm khud discover karta hai!</strong></p>
+  </div>
+
+  <h3>Classification vs Clustering — MOST IMPORTANT CONFUSION!</h3>
+
+  <div class="compare-grid">
+    <div class="compare-card card-green">
+      <h4>Classification</h4>
+      <ul>
+        <li>Categories ALREADY known</li>
+        <li>Model learns to assign them</li>
+        <li>Example: Cat/Dog already defined</li>
+        <li>New image → Cat ✓</li>
+      </ul>
+    </div>
+    <div class="compare-card card-blue" style="background:#e8eaf6; border-color:#3f51b5;">
+      <h4 style="color:#3f51b5;">Clustering</h4>
+      <ul>
+        <li>Categories NOT given</li>
+        <li>Algorithm discovers groups</li>
+        <li>Example: Customers</li>
+        <li>→ Group 1, 2, 3 discover hote hain</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="mega-point">
+    Classification = KNOWN labels predict karo<br>
+    Clustering = UNKNOWN groups discover karo
+  </div>
+
+  <h3>Quick Identification Hack 🎯</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Question type</th><th>Task</th><th>Example</th></tr>
+      <tr><td>"Kitna?" / "What value?"</td><td><strong>REGRESSION</strong></td><td>House price? Temperature?</td></tr>
+      <tr><td>"Kaunsi category?"</td><td><strong>CLASSIFICATION</strong></td><td>Spam or not? Cat/Dog?</td></tr>
+      <tr><td>"Natural groups kya hain?"</td><td><strong>CLUSTERING</strong></td><td>Customer segments?</td></tr>
+    </table>
+  </div>
+
+  <h3>Netflix Example — Sab Ek Jagah 🎬</h3>
+  <div class="example">
+    User data: watch history, watch time, genre preferences, ratings<br><br>
+    <strong>Case 1 — Predict next movie rating?</strong><br>
+    Output: 8.4/10 → <span class="hl-blue">REGRESSION</span><br><br>
+    <strong>Case 2 — Will user watch this movie?</strong><br>
+    Output: Will Watch / Won't Watch → <span class="hl-green">CLASSIFICATION</span><br><br>
+    <strong>Case 3 — Discover user taste groups?</strong><br>
+    No predefined labels → Algorithm discovers:<br>
+    Group A = thriller-heavy users<br>
+    Group B = family-comedy users<br>
+    Group C = sci-fi binge watchers → <span class="hl-yellow">CLUSTERING</span>
+  </div>
+
+  <h3>Important: Paradigm ≠ Task!</h3>
+  <div class="box box-yellow">
+    <div class="box-title">🧩 Same Problem, Different Setup</div>
+    <p>"Will user churn?"<br><br>
+    <strong>Setup A:</strong> historical users + known churn labels → <span class="hl-green">Supervised Classification</span><br><br>
+    <strong>Setup B:</strong> customer behaviour → discover natural user groups → <span class="hl-yellow">Unsupervised Clustering</span><br><br>
+    See? Paradigm and task are NOT the same thing!</p>
+  </div>
+
+  <h3>Data → Paradigm → Task: Clean Pipeline</h3>
+  <div class="diagram">STEP 1: What data do I have?
+        │
+        ├── Labels hain → STEP 2 ke liye SUPERVISED
+        └── No labels   → STEP 2 ke liye UNSUPERVISED/RL
+
+STEP 2: How is the system learning?
+        │
+        ├── Supervised / Unsupervised / Semi / RL
+
+STEP 3: What output do I want?
+        │
+        ├── Numerical value → REGRESSION
+        ├── Known category  → CLASSIFICATION
+        └── Unknown groups  → CLUSTERING</div>
+</div>
+
+
+<!-- CONFUSIONS -->
+<div class="lecture" id="confusions">
+  <h2>Part 8 — 5 Confusions Abhi Clear Karo!</h2>
+
+  <div class="confusion">
+    <div class="confusion-title">Confusion 1: "AI aur ML same hain?"</div>
+    <p>❌ Nahi! AI = Umbrella field. ML = major subset/approach within AI.</p>
+  </div>
+
+  <div class="confusion">
+    <div class="confusion-title">Confusion 2: "ML aur DL same hain?"</div>
+    <p>❌ Nahi! DL ⊂ ML. Deep Learning is a specialized ML approach based on deep neural networks.</p>
+  </div>
+
+  <div class="confusion">
+    <div class="confusion-title">Confusion 3: "Supervised = Classification?"</div>
+    <p>❌ Nahi! Classification supervised task hai, aur Regression bhi supervised task hai!</p>
+    <div class="diagram" style="font-size:13px;">Supervised
+├── Regression
+└── Classification</div>
+  </div>
+
+  <div class="confusion">
+    <div class="confusion-title">Confusion 4: "Unsupervised = Clustering?"</div>
+    <p>❌ Clustering is the major example, but unsupervised learning is broader. L0 mein clustering pe focus hai.</p>
+  </div>
+
+  <div class="confusion">
+    <div class="confusion-title">Confusion 5: "Labelled data = supervised learning automatically?"</div>
+    <p>Labels = key clue for supervised, but you still need to understand: what is the target? What task are you performing?</p>
+  </div>
+
+  <!-- COMPLETE MAP -->
+  <h3>🧠 The Most Important Conceptual Map of Lecture 0</h3>
+  <div class="diagram">                           AI
+                            │
+           ┌────────────────┼─────────────────┐
+           │                │                 │
+         Search            ML             Robotics
+                            │
+                           DL
+
+
+     ML LEARNING SETUP
+  ─────────────────────────────
+
+  Do we have labels?
+
+        YES                        NO
+         │                          │
+         ▼                          ▼
+    SUPERVISED               UNSUPERVISED
+     /       \                      │
+    /         \                     ▼
+Regression Classification       Clustering
+
+
+  SOME labels + lots unlabeled    Agent interacts with world
+               │                           │
+               ▼                           ▼
+       SEMI-SUPERVISED           REINFORCEMENT LEARNING</div>
+
+  <!-- LECTURE 0 STORY -->
+  <h3>Lecture 0 ko Ek Story ki Tarah Yaad Karo 📖</h3>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="tl-title">Traditional Programming</div>
+      <p>Human writes rules manually</p>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-title">Problem</div>
+      <p>World complex + changing → Rules insufficient</p>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-title">AI</div>
+      <p>Let's build machines with intelligent behaviour!</p>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-title">ML</div>
+      <p>Instead of manually writing every rule, let the machine learn patterns from data.</p>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-title">DL</div>
+      <p>For complex raw data (images/audio), deep neural networks automatically learn representations.</p>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-title">Labels?</div>
+      <p>Labelled/Unlabelled data → determines learning paradigm (Supervised/Unsupervised/Semi/RL)</p>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-title">Task</div>
+      <p>Regression / Classification / Clustering → What exactly are we solving?</p>
+    </div>
+  </div>
+
+  <div class="memory">
+    <div class="memory-title">⚡ 15-Second Memory Palace</div>
+    <pre>TRADITIONAL PROGRAMMING:  Data + Rules → Answer
+AI:                       Machine ko intelligent banao
+ML:                       Data + Answers → learned pattern
+DL:                       Deep neural networks learn representations
+
+LABELS?
+  Yes   → Supervised
+  No    → Unsupervised
+  Some  → Semi-supervised
+  Agent + Environment → Reinforcement
+
+OUTPUT?
+  Number   → Regression
+  Category → Classification
+  Groups   → Clustering</pre>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-title">📝 Lecture 0 — Self Check</div>
+    <ol>
+      <li>Traditional programming ka basic pipeline?</li>
+      <li>ML ka paradigm flip kya hai?</li>
+      <li>AI, ML, DL hierarchy kya hai?</li>
+      <li>Labelled data kya hota hai?</li>
+      <li>4 learning paradigms kaunse hain?</li>
+      <li>Regression aur Classification ka difference?</li>
+      <li>Classification aur Clustering ka difference?</li>
+      <li>DL ⊂ ML ⊂ AI — prove karo apne words mein</li>
+    </ol>
+  </div>
+</div>
+
+
+<!-- ======================================================= -->
+<!-- LECTURE 10: FEATURE SELECTION -->
+<!-- ======================================================= -->
+<div class="lecture" id="lec10">
+  <div class="lecture-header">
+    <div class="lecture-badge badge-l10">Lecture 10</div>
+    <div class="lecture-title">🔍 Feature Selection</div>
+    <div class="lecture-subtitle">Dataset mein 100 features hain... kya model ko 100 ke 100 de dene chahiye?</div>
+  </div>
+
+  <div class="mega-point">Answer: Not Necessarily! 📦</div>
+
+  <h3>Context — Lectures 8, 9, 10 ka Connection</h3>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="tl-title">Lecture 8 — Feature Engineering</div>
+      <p>x → x² banake features create kiye (polynomial regression)</p>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-title">Lecture 9 — Bias-Variance</div>
+      <p>Extra complexity → variance badha sakti hai</p>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-title">Lecture 10 — Feature Selection</div>
+      <p>"Jo features already available hain, unmein se kaunse rakhne chahiye?"</p>
+    </div>
+  </div>
+
+  <h3>Feature Kya Hota Hai?</h3>
+  <div class="example">
+    Stipend prediction problem:<br><br>
+    Features (inputs):
+    <ul style="padding-left:20px; font-family:'Patrick Hand',cursive;">
+      <li>CGPA ✅</li>
+      <li>IQ ✅</li>
+      <li>Number of Projects ✅</li>
+      <li>Attendance ✅</li>
+      <li>CGPA_copy ⚠️ (duplicate!)</li>
+      <li>Student_ID 🚫 (identifier!)</li>
+      <li>Random_number 🚫 (irrelevant!)</li>
+    </ul><br>
+    Target: Stipend<br><br>
+    <strong>Kya ye saare 7 columns genuinely useful hain? NO!</strong>
+  </div>
+
+  <h3>Feature Selection vs Feature Transformation — VERY IMPORTANT!</h3>
+
+  <div class="compare-grid">
+    <div class="compare-card card-red">
+      <h4>Feature Transformation (L8)</h4>
+      <ul>
+        <li>Naya representation create karte ho</li>
+        <li>x → x² (new feature bana!)</li>
+        <li>Original se alag cheez bani</li>
+      </ul>
+    </div>
+    <div class="compare-card card-green">
+      <h4>Feature Selection (L10)</h4>
+      <ul>
+        <li>Existing columns mein se choose karte ho</li>
+        <li>[x1, x2, x3, x4] → [x1, x3]</li>
+        <li>Koi naya feature create nahi!</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>3 Types of Feature Behaviour</h3>
+  <div class="pillar-grid">
+    <div class="pillar" style="background:#e8f5e9; border-color:#2e7d32;">
+      <div class="pillar-icon">✅</div>
+      <div class="pillar-title" style="color:#2e7d32;">Relevant</div>
+      <p>Target prediction mein stable information provide karta hai. Example: Projects → Stipend</p>
+    </div>
+    <div class="pillar" style="background:#fff3e0; border-color:#e65100;">
+      <div class="pillar-icon">♻️</div>
+      <div class="pillar-title" style="color:#e65100;">Redundant</div>
+      <p>Already-present feature ki information repeat karta hai. Example: CGPA_copy = CGPA</p>
+    </div>
+    <div class="pillar" style="background:#ffebee; border-color:#c62828;">
+      <div class="pillar-icon">🗑️</div>
+      <div class="pillar-title" style="color:#c62828;">Irrelevant</div>
+      <p>Stable predictive relationship nahi deta. Example: Random_number</p>
+    </div>
+  </div>
+
+  <h3>"More Features = Better Model" — WRONG!</h3>
+
+  <div class="danger">
+    5 useful features + 20 random features → Training error kam ho sakti hai BUT validation performance worsen! Irrelevant features model ko random noise fit karne par force karte hain → variance increase → poor generalization.
+  </div>
+
+  <h3>Feature Selection ke Benefits</h3>
+  <div class="checklist">
+    <li class="done">Generalization — Irrelevant features remove → unnecessary flexibility kam</li>
+    <li class="done">Computation — Smaller matrix → less computation</li>
+    <li class="done">Memory — Fewer columns → less storage</li>
+    <li class="done">Interpretability — 7 features explain karna easy vs 700</li>
+    <li class="done">Stability — Redundant features remove → multicollinearity reduce</li>
+  </div>
+</div>
+
+
+<!-- FILTER METHODS -->
+<div class="lecture" id="filter">
+  <h2>Feature Selection — Part I: Filter Methods</h2>
+
+  <h3>Filter Method = "Admission Gate" 🚪</h3>
+  <div class="box box-blue">
+    <div class="box-title">💡 Key Point</div>
+    <p>Filter method typically does NOT repeatedly train the final predictive model for each feature subset. It uses simple statistical/structural checks — fast!</p>
+  </div>
+
+  <h3>Filter Method 1 — Duplicate Removal</h3>
+
+  <div class="example">
+    <div class="table-wrap">
+      <table>
+        <tr><th>CGPA</th><th>CGPA_copy</th></tr>
+        <tr><td>8.5</td><td>8.5</td></tr>
+        <tr><td>9.0</td><td>9.0</td></tr>
+        <tr><td>7.2</td><td>7.2</td></tr>
+      </table>
+    </div>
+    Both columns same information! → One ko remove karo.
+  </div>
+
+  <div class="box box-yellow">
+    <div class="box-title">⚠️ Duplicate Rakhne se Kya Problem?</div>
+    <p>Linear regression mein: <strong>Perfect Multicollinearity</strong> create ho sakti hai!</p>
+    <p>X^T X singular ho sakta hai → (X^T X)^{-1} exist nahi karta!</p>
+    <p>So duplicate removal = efficiency ke liye + mathematical stability ke liye!</p>
+  </div>
+
+  <h4>Kaun sa Rakhein?</h4>
+  <ul class="checklist">
+    <li>Clearer/meaningful name</li>
+    <li>Fewer missing or corrupted values</li>
+    <li>Easier/cheaper to collect at prediction time</li>
+    <li>Ensure it's not a leakage column!</li>
+  </ul>
+
+  <h3>Filter Method 2 — Variance Threshold</h3>
+
+  <div class="math-display">Var(f_j) = (1/n) × Σ(x_ij − x̄_j)²</div>
+
+  <p>Agar variance bahut low hai → feature observations ko distinguish karne mein kam useful ho sakta hai.</p>
+  <p>Rule: Var(f_j) &lt; τ (threshold) → remove candidate</p>
+
+  <div class="example">
+    Constant feature: [5, 5, 5, 5, 5]<br>
+    Mean = 5, Deviation = 0 for all<br>
+    Var = 0 → obvious removal candidate!
+  </div>
+
+  <div class="danger">
+    LOW Variance ≠ Useless! Suppose: [0, 0, 0, 0, 1] — Rare binary feature. Variance low. But maybe "1" = scholarship student, aur scholarship students ko ek specific stipend milta hai. That tiny feature can be HIGHLY predictive!
+  </div>
+
+  <div class="danger">
+    HIGH Variance ≠ Predictive! Student_ID: 101, 102, 103... Values vary, variance non-zero. But does Student_ID predict stipend? NO! Variance only answers: "Feature varies kitna?" NOT: "Is it useful for predicting Y?"
+  </div>
+
+  <div class="box box-green">
+    <div class="box-title">✅ Variance Filter Actually Poochha Kya?</div>
+    <p>"Does this feature have enough SPREAD to distinguish observations?"<br>
+    It does NOT ask: "Is it useful for predicting Y?"</p>
+  </div>
+
+  <h3>Filter Method 3 — Feature vs Target Correlation</h3>
+
+  <p>Better question for numeric variables: "Feature X_j aur target Y kitna linearly move karte hain?"</p>
+
+  <div class="math-display">r_jY = Σ(x_ij − x̄_j)(y_i − ȳ) / √[Σ(x_ij − x̄_j)² × Σ(y_i − ȳ)²]</div>
+  <div class="math-display">Range: -1 ≤ r ≤ +1</div>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>r value</th><th>Matlab</th></tr>
+      <tr><td>r ≈ +1</td><td>Strong positive linear: x↑ → y↑</td></tr>
+      <tr><td>r ≈ -1</td><td>Strong negative linear: x↑ → y↓</td></tr>
+      <tr><td>r ≈ 0</td><td>Weak linear relationship</td></tr>
+    </table>
+  </div>
+
+  <h3>🔥 MOST IMPORTANT WARNING: r = 0 ≠ No Predictive Value!</h3>
+
+  <div class="danger">
+    Suppose: y = x²<br>
+    Take symmetric x: -2, -1, 0, 1, 2<br>
+    Then: y = 4, 1, 0, 1, 4<br><br>
+    Relationship PERFECTLY deterministic — given x, we know y exactly!<br>
+    Yet Pearson r = 0!<br><br>
+    Why? Pearson correlation measures LINEAR association only.<br>
+    Positive side pushes up, negative side also pushes up → cancel!
+  </div>
+
+  <div class="diagram" style="font-size:13px;">y
+|
+| *             *
+|    *       *
+|        *
++──────────────── x
+  -2 -1  0  1  2
+
+Perfect U-shape. r = 0 despite perfect nonlinear predictability!</div>
+
+  <div class="box box-blue">
+    <div class="box-title">🔗 Lecture 8 Connection</div>
+    <p>Lecture 8 mein humne x² use kiya curve capture karne ke liye.<br>
+    Lecture 10 mein: A Pearson-correlation filter could MISTAKENLY reject x if the true relationship is nonlinear!</p>
+  </div>
+
+  <h4>Input-Input Correlation</h4>
+  <div class="example">
+    X_i ↔ X_j check karte hain → redundant features aur multicollinearity find karne ke liye!<br><br>
+    Suppose: corr(X1, X2) = 0.95 → Both carry highly similar linear information → Maybe keep one!
+  </div>
+
+  <div class="sticky blue">
+    ⚠️ <strong>Correlated feature automatically delete mat karo!</strong><br>
+    Example: x aur x² strongly correlated ho sakte hain, but BOTH may be necessary to represent a nonlinear pattern!
+  </div>
+
+  <h3>Filter Methods — Summary</h3>
+  <div class="diagram" style="font-size:13px;">               FILTER
+                  |
+       +----------+----------+
+       |          |          |
+   Duplicate    Variance   Correlation
+   removal      threshold   with target
+                              |
+                              + Input-input correlation
+
+Advantages:  Fast, Simple, Scalable
+Limitations: Can miss interactions and nonlinear signal</div>
+</div>
+
+
+<!-- WRAPPER METHODS -->
+<div class="lecture" id="wrapper">
+  <h2>Feature Selection — Part II: Wrapper Methods</h2>
+
+  <h3>Why Filters Aren't Enough?</h3>
+
+  <div class="box box-yellow">
+    <div class="box-title">💡 The Interaction Problem</div>
+    <p>Suppose X1 alone weak hai. X2 alone bhi weak hai. But together (X1, X2) extremely powerful!</p>
+    <div class="formula">Y = X1 × X2</div>
+    <p>Ek-ek feature dekhne wala filter miss kar dega. Wrapper method kehta hai: "Let's actually TRAIN the model on subsets!"</p>
+  </div>
+
+  <h3>Wrapper Method = Model in the Loop 🔄</h3>
+
+  <div class="diagram">Choose subset → Train model → Validate → Choose next subset → ...
+
+Isko "wrapper" bolte hain kyunki predictive model is effectively
+WRAPPED INSIDE the feature-selection process.</div>
+
+  <h3>Validation Use Karna Kyun Zaroori?</h3>
+  <div class="example">
+    Random feature add karo → Training error: 5 → 2 (looks amazing!)<br>
+    But Validation error: 8 → 10 (worse!)<br><br>
+    <strong>Feature ne generalization help nahi ki!</strong><br><br>
+    Hence wrapper selection MUST use validation/cross-validated performance, NOT training performance!
+  </div>
+
+  <h3>Exhaustive Feature Selection</h3>
+
+  <p>p features ke liye, har feature Include ya Exclude:</p>
+  <div class="math-display">Total nonempty subsets = 2^p - 1</div>
+
+  <div class="example">
+    p = 3 → 2³ - 1 = 7 subsets<br>
+    {A}, {B}, {C}, {A,B}, {A,C}, {B,C}, {A,B,C}<br><br>
+    p = 20 → 2²⁰ - 1 = 1,048,575 (over 1 million!)<br>
+    p = 30 → 2³⁰ - 1 = 1,073,741,823 (over 1 BILLION!)<br><br>
+    <strong>Computational cost: EXPONENTIAL 💀</strong>
+  </div>
+
+  <div class="danger">
+    Exhaustive ka Doosra Problem: 1,000,000 subsets test karo → One may look best on validation simply due to RANDOM LUCK → Search itself can overfit the validation procedure!
+  </div>
+
+  <h3>Backward Elimination</h3>
+  <div class="box box-blue">
+    <div class="box-title">📉 Strategy: Start with ALL features, remove one by one</div>
+    <p>Every step mein: locally best next move choose karo.</p>
+  </div>
+
+  <h4>Worksheet Backward Elimination Example</h4>
+
+  <p>Starting: {f1, f2, f3, f4} → CV R² = 0.89</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Subset (remove one)</th><th>CV R²</th></tr>
+      <tr><td>{f2, f3, f4}</td><td>0.81</td></tr>
+      <tr><td>{f1, f3, f4}</td><td>0.71</td></tr>
+      <tr><td style="background:#e8f5e9;"><strong>{f1, f2, f4} ← Best!</strong></td><td style="background:#e8f5e9;"><strong>0.91</strong></td></tr>
+      <tr><td>{f1, f2, f3}</td><td>0.65</td></tr>
+    </table>
+  </div>
+
+  <p>→ Remove f3. Interesting: 0.89 → 0.91 (removing improved performance!)</p>
+
+  <p>Continue with {f1, f2, f4}:</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Subset</th><th>CV R²</th></tr>
+      <tr><td>{f2, f4}</td><td>0.79</td></tr>
+      <tr><td>{f1, f4}</td><td>0.81</td></tr>
+      <tr><td style="background:#e8f5e9;">{f1, f2} ← Best</td><td style="background:#e8f5e9;">0.83</td></tr>
+    </table>
+  </div>
+
+  <p>Continue with {f1, f2}:</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Subset</th><th>CV R²</th></tr>
+      <tr><td>{f1}</td><td>0.53</td></tr>
+      <tr><td>{f2}</td><td>0.63</td></tr>
+    </table>
+  </div>
+
+  <p><strong>All subsets encountered:</strong></p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Features</th><th>CV R²</th><th>Status</th></tr>
+      <tr><td>4 features</td><td>0.89</td><td>—</td></tr>
+      <tr style="background:#e8f5e9;"><td><strong>3 features {f1, f2, f4}</strong></td><td><strong>0.91</strong></td><td>⭐ BEST!</td></tr>
+      <tr><td>2 features {f1, f2}</td><td>0.83</td><td>—</td></tr>
+      <tr><td>1 feature {f2}</td><td>0.63</td><td>—</td></tr>
+    </table>
+  </div>
+
+  <p>Selected: <strong>{f1, f2, f4}</strong> with highest CV R²!</p>
+
+  <div class="sticky pink">
+    🚨 <strong>Backward Greedy kyun hai?</strong><br>
+    Once f3 removed → gone forever! Maybe future mein {f3, f4} combination useful hota. But since f3 was already deleted, algorithm never explores it. → Greedy search can MISS global optimum!
+  </div>
+
+  <h4>Backward Elimination Computational Cost</h4>
+  <div class="math-display">Path length ≈ 1 + p + (p-1) + ... + 2 = p(p+1)/2</div>
+  <div class="math-display">Cost: O(p²) vs Exhaustive O(2^p)</div>
+
+  <div class="example">
+    p = 6:<br>
+    Exhaustive: 2⁶ - 1 = 63 subsets<br>
+    Backward path: 6×7/2 = 21 subsets<br><br>
+    <strong>Much less than exhaustive!</strong>
+  </div>
+
+  <h3>Forward Selection</h3>
+  <div class="box box-green">
+    <div class="box-title">📈 Strategy: Start with NOTHING, add one by one</div>
+    <p>Baseline: ŷ = ȳ (mean-only predictor)</p>
+  </div>
+
+  <h4>Worksheet Forward Example</h4>
+
+  <p>Start: no features. Try one at a time:</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Subset</th><th>CV R²</th></tr>
+      <tr style="background:#e8f5e9;"><td>{f1} ← Best</td><td>0.63</td></tr>
+      <tr><td>{f2}</td><td>0.51</td></tr>
+      <tr><td>{f3}</td><td>0.43</td></tr>
+      <tr><td>{f4}</td><td>0.49</td></tr>
+    </table>
+  </div>
+
+  <p>Choose f1. Now add to {f1}:</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Subset</th><th>CV R²</th></tr>
+      <tr><td>{f1, f2}</td><td>0.63</td></tr>
+      <tr><td>{f1, f3}</td><td>0.71</td></tr>
+      <tr style="background:#e8f5e9;"><td>{f1, f4} ← Best</td><td>0.80</td></tr>
+    </table>
+  </div>
+
+  <p>Choose f4. Now add to {f1, f4}:</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Subset</th><th>CV R²</th></tr>
+      <tr><td>{f1, f4, f2}</td><td>0.81</td></tr>
+      <tr style="background:#e8f5e9;"><td>{f1, f4, f3} ← Best</td><td>0.85</td></tr>
+    </table>
+  </div>
+
+  <p>Try adding f2 → {f1, f4, f3, f2} = 0.83 (worse than 0.85!)</p>
+  <p>→ Selected: <strong>{f1, f4, f3}</strong> with CV R² = 0.85</p>
+
+  <h3>Forward vs Backward — Memory</h3>
+  <div class="compare-grid">
+    <div class="compare-card card-green">
+      <h4>Forward Selection ↑</h4>
+      <ul>
+        <li>Start: Nothing</li>
+        <li>Add best → Add best → ...</li>
+        <li>Natural when keeping tiny fraction</li>
+        <li>100 → 10 features</li>
+      </ul>
+    </div>
+    <div class="compare-card card-red">
+      <h4>Backward Elimination ↓</h4>
+      <ul>
+        <li>Start: Everything</li>
+        <li>Remove worst → Remove worst → ...</li>
+        <li>Natural when removing few</li>
+        <li>100 → 90 features</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Exhaustive vs Forward vs Backward</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Method</th><th>Start</th><th>Cost</th><th>Main Issue</th></tr>
+      <tr><td>Exhaustive</td><td>All subsets</td><td>Exponential 2^p</td><td>Expensive + validation overfit</td></tr>
+      <tr><td>Backward</td><td>All features</td><td>Quadratic p(p+1)/2</td><td>Greedy</td></tr>
+      <tr><td>Forward</td><td>No features</td><td>Quadratic</td><td>Greedy</td></tr>
+    </table>
+  </div>
+
+  <h3>Filter vs Wrapper — SUPER IMPORTANT COMPARISON</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Property</th><th>Filter</th><th>Wrapper</th></tr>
+      <tr><td>Uses actual model?</td><td>Usually No</td><td>Yes</td></tr>
+      <tr><td>Captures interactions?</td><td>Usually No</td><td>Yes</td></tr>
+      <tr><td>Model-specific?</td><td>Usually No</td><td>Yes</td></tr>
+      <tr><td>Cost</td><td>Low ✅</td><td>High ⚠️</td></tr>
+      <tr><td>Good for</td><td>Fast screening</td><td>Model-specific search</td></tr>
+    </table>
+  </div>
+
+  <h3>Practical Strategy 💡</h3>
+  <div class="diagram">When p = 1000s of features:
+
+1000s of features
+      ↓
+Simple Filters
+(remove duplicates, obvious junk)
+      ↓
+Maybe 100 features
+      ↓
+Wrapper Search
+      ↓
+Compact validated subset</div>
+</div>
+
+
+<!-- LEAKAGE -->
+<div class="lecture" id="leakage10">
+  <h2>Feature Selection — Part III: Leakage 🚨</h2>
+
+  <h3>Sabse Important Topic of Lecture 10</h3>
+
+  <div class="danger">
+    Suppose entire dataset ka use karke correlation calculate kiya, top 5 features select kiye, PHIR train/validation split kiya. PROBLEM: Validation data already feature selection mein influence kar chuka hai. Model ne validation set ko indirectly PEEK kar liya. Yeh hai: DATA LEAKAGE!
+  </div>
+
+  <h3>Wrong Pipeline ❌</h3>
+  <div class="diagram">Entire Dataset
+      ↓
+Compute correlation
+      ↓
+Select top 5 features
+      ↓
+Split into Train / Validation
+      ↓
+Cross-validation
+
+❌ WRONG! Feature-selection decision already saw all data.
+Validation is no longer truly untouched.</div>
+
+  <h3>Correct Pipeline ✅</h3>
+  <div class="diagram">Raw data
+   ↓
+Split / CV fold
+   ↓
+Training portion ONLY
+   ↓
+Fit feature selector (using training data only!)
+   ↓
+Select features
+   ↓
+Train model on selected features
+   ↓
+Apply SAME selection to untouched validation portion
+   ↓
+Evaluate
+
+Then next CV fold repeats with its own training subset!</div>
+
+  <div class="box box-yellow">
+    <div class="box-title">⚠️ Why This Matters?</div>
+    <p>Suppose correlation threshold iteself is learned from all data. Then validation set influenced WHICH features survived. So validation isn't truly independent anymore.</p>
+    <p>Result: CV score = 0.90 report karte ho, but actual unseen performance = 0.75!</p>
+    <div class="formula">Leakage ⟹ Optimistic Evaluation ⚠️</div>
+  </div>
+
+  <h3>Final Test Set ka GOLDEN RULE 🏆</h3>
+
+  <div class="mega-point">
+    Test set ko KABHI feature selection mein use mat karo!<br>
+    Not for choosing correlation threshold<br>
+    Not for choosing number of features<br>
+    Not for comparing candidate subsets<br>
+    → Final test evaluation: ONCE, at the very end!
+  </div>
+
+  <h3>End-to-End Feature Selection Workflow</h3>
+
+  <ol class="steps">
+    <li>Goal & Metrics define karo</li>
+    <li>Data split karo (Train / Validation / Test)</li>
+    <li>Duplicates aur structurally unusable columns remove karo</li>
+    <li>Filter methods apply karo (training data pe)</li>
+    <li>Wrapper search karo (CV ke andar)</li>
+    <li>Thresholds/counts/stopping rules choose karo inside CV</li>
+    <li>All-feature baseline se compare karo</li>
+    <li>Final untouched test evaluation — ONCE!</li>
+  </ol>
+
+  <h3>Selected Features = NOT Universal Truth!</h3>
+  <div class="box box-blue">
+    <div class="box-title">💡 Feature Usefulness is Conditional</div>
+    <p>Suppose experiment selected: {CGPA, Projects, Attendance}</p>
+    <p>Change the target Y1 → Y2 → Useful features change</p>
+    <p>Change the model: Linear Regression vs Decision Tree → features change</p>
+    <p>Change the metric: RMSE vs MAE → preferred subset change</p>
+    <p>Change the sample → different features!</p>
+    <div class="formula">Useful(feature) = f(target, model, metric, sample, validation design)</div>
+  </div>
+
+  <h3>Smallest Feature Set = NOT Always Best!</h3>
+  <div class="example">
+    Model A: 7 features, CV score = 0.84<br>
+    Model B: 18 features, CV score = 0.841<br><br>
+    Almost identical performance → prefer simpler 7-feature model<br><br>
+    But larger model retain karo agar:<br>
+    → Domain knowledge justify karta hai<br>
+    → Measurement reliability<br>
+    → Meaningful validated advantage<br><br>
+    <strong>"Fewest possible features" is NOT an absolute objective!</strong>
+  </div>
+
+  <h3>🚨 Feature Selection Traps — All in One!</h3>
+
+  <div class="confusion">
+    <div class="confusion-title">Trap 1: "Student_ID has high variance → must be predictive"</div>
+    <p>❌ WRONG! Variance = spread, NOT relevance!</p>
+  </div>
+  <div class="confusion">
+    <div class="confusion-title">Trap 2: "Scholarship_flag only 3% students → remove it"</div>
+    <p>❌ WRONG! Rare ≠ Useless!</p>
+  </div>
+  <div class="confusion">
+    <div class="confusion-title">Trap 3: "Project_depth and Project_depth² correlated → delete x²"</div>
+    <p>❌ WRONG! x² wahan curvature model karne ke liye tha! High correlation ≠ automatically redundant!</p>
+  </div>
+  <div class="confusion">
+    <div class="confusion-title">Trap 4: "Pearson r = 0 → feature cannot predict"</div>
+    <p>❌ WRONG! y = x² perfectly predictable but r = 0!</p>
+  </div>
+  <div class="confusion">
+    <div class="confusion-title">Trap 5: "Feature selection before CV" — Validation Leakage!</div>
+    <p>❌ WRONG! Feature selection MUST happen inside CV, using only training fold data!</p>
+  </div>
+
+  <div class="memory">
+    <div class="memory-title">🧠 Lecture 10 Master Mantra</div>
+    <pre>Don't ask "Which feature is important?" in isolation.
+
+Instead ask:
+"Important for which TARGET, which MODEL,
+which METRIC, on which SAMPLE,
+under which VALIDATION DESIGN?"</pre>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-title">📝 Lecture 10 — Self Check</div>
+    <ol>
+      <li>Feature selection aur feature transformation mein exact difference?</li>
+      <li>Relevant, redundant, irrelevant feature ka difference?</li>
+      <li>Variance filter kya measure karta hai aur kya NAHI?</li>
+      <li>Low-variance rare binary feature kyun remove nahi karna?</li>
+      <li>Pearson r = 0 ke baad bhi feature perfectly predictive kaise?</li>
+      <li>Filter aur wrapper mein fundamental difference?</li>
+      <li>p features ke exhaustive nonempty subsets: formula kya?</li>
+      <li>Backward elimination greedy kyun hai?</li>
+      <li>Feature selection before CV → leakage kyun?</li>
+      <li>2^p - 1 ka matlab kya hai?</li>
+    </ol>
+  </div>
+</div>
+
+
+<!-- ======================================================= -->
+<!-- LECTURE 11: PCA -->
+<!-- ======================================================= -->
+<div class="lecture" id="lec11">
+  <div class="lecture-header">
+    <div class="lecture-badge badge-l11">Lecture 11</div>
+    <div class="lecture-title">📐 Dimensionality Reduction & PCA</div>
+    <div class="lecture-subtitle">Principal Component Analysis — Naye Axes Banana</div>
+  </div>
+
+  <div class="box box-yellow">
+    <div class="box-title">🔄 Lecture 10 vs Lecture 11 — The Key Shift</div>
+    <p><strong>Lecture 10:</strong> "Kaunse original features rakhne hain?" → Select karo</p>
+    <p><strong>Lecture 11:</strong> "Agar useful information kai features mein spread hai, koi ek feature alone enough nahi → Kya karein?" → <strong>PCA!</strong></p>
+  </div>
+
+  <h3>Dimensionality Kya Hai?</h3>
+  <div class="example">
+    Dataset: CGPA | IQ | Projects<br>
+    → p = 3 (3 features = 3 dimensions)<br><br>
+    Image 100×100 pixels:<br>
+    → p = 10,000 features!<br><br>
+    <strong>More features = more computation, more redundancy, potentially more noise.</strong>
+  </div>
+
+  <h3>Image Example — PCA ka Hook</h3>
+
+  <div class="example">
+    Image m×m pixels. Center mein ek object hai (f×f region).<br>
+    Background = mostly uninformative variation/noise.<br><br>
+    Full image (m×m) vs Perfect object crop (f×f):<br>
+    Maybe accuracy almost same!<br><br>
+    → Extra background pixels = mostly uninformative + costly computation!<br>
+    → PCA aise "compression" mein help karta hai.
+  </div>
+
+  <h3>Feature Selection vs PCA — THE CORE DIFFERENCE</h3>
+
+  <div class="compare-grid">
+    <div class="compare-card card-blue">
+      <h4>Feature Selection (L10)</h4>
+      <pre style="font-size:12px; background:#e3f2fd; box-shadow:none; padding:8px; color:#1565c0;">Original axes: x1, x2, x3, x4
+
+After selection:
+x1, x3
+
+(original columns retain/discard)</pre>
+      <p style="font-family:'Patrick Hand',cursive; font-size:13px;">Koi naya feature create nahi!</p>
+    </div>
+    <div class="compare-card card-green">
+      <h4>PCA (L11)</h4>
+      <pre style="font-size:12px; background:#e8f5e9; box-shadow:none; padding:8px; color:#2e7d32;">Original: x1, x2, x3, x4
+
+After PCA:
+PC1 = w1*x1 + w2*x2 + w3*x3 + w4*x4
+PC2 = ...
+
+(new axes bante hain!)</pre>
+      <p style="font-family:'Patrick Hand',cursive; font-size:13px;">Feature EXTRACTION — new features bante hain!</p>
+    </div>
+  </div>
+
+  <div class="mega-point">
+    Feature Selection → Old axes retain/discard ✂️<br>
+    PCA → New axes BANATA hai 🔄
+  </div>
+
+  <h3>PCA Kya Hai?</h3>
+  <div class="box box-blue">
+    <div class="box-title">📚 Definition</div>
+    <p>PCA is an <span class="hl-yellow">unsupervised linear feature-extraction method</span> that finds a new set of <strong>orthogonal axes</strong> along which the <strong>variance of the data is maximized</strong>.</p>
+    <p>Human language mein: Data ko aise rotate karo ki pehla new direction data ka <strong>maximum spread capture kare</strong>, phir second direction remaining largest spread, aur so on. Phir low-importance directions hata do.</p>
+  </div>
+
+  <h3>"Maximum Variance" Kyun?</h3>
+  <div class="example">
+    Data aise dikhta hai (diagonal direction mein spread):
+    <div class="diagram" style="font-size:13px;">x2
+|              *
+|          *
+|      *
+|   *
++────────────── x1
+
+Original x1 axis mein kuch info, x2 mein bhi,
+but actual important direction = diagonal ↗
+
+PCA woh diagonal direction (PC1) pick karega!</div>
+  </div>
+
+  <div class="box box-yellow">
+    <div class="box-title">⚠️ PCA is Unsupervised!</div>
+    <p>Standard PCA <strong>does NOT use target Y</strong> to find directions. It only looks at X and its variance/covariance structure.</p>
+    <p>BIG LIMITATION: Suppose target depends on a low-variance direction. PCA may remove it! High variance ≠ high predictive relevance!</p>
+  </div>
+</div>
+
+
+<!-- PCA MATH -->
+<div class="lecture" id="pca-math">
+  <h2>PCA Mathematics — Step by Step</h2>
+
+  <h3>Notation Table</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Symbol</th><th>Matlab</th></tr>
+      <tr><td>n</td><td>Number of observations (rows)</td></tr>
+      <tr><td>p</td><td>Original features (columns)</td></tr>
+      <tr><td>k</td><td>Retained principal components</td></tr>
+      <tr><td>X</td><td>Original n×p data matrix</td></tr>
+      <tr><td>μ</td><td>Vector of feature means</td></tr>
+      <tr><td>X_c</td><td>Centered data</td></tr>
+      <tr><td>S</td><td>Covariance matrix (p×p)</td></tr>
+      <tr><td>v_j</td><td>Eigenvector / PC direction</td></tr>
+      <tr><td>λ_j</td><td>Eigenvalue / variance captured</td></tr>
+      <tr><td>W_k</td><td>Matrix of first k eigenvectors (p×k)</td></tr>
+      <tr><td>Z</td><td>Transformed PC scores (n×k)</td></tr>
+    </table>
+  </div>
+
+  <h3>Step 1 — Mean Centering</h3>
+  <div class="math-display">x_c = x - x̄  (for one feature)</div>
+  <div class="math-display">X_c = X - 1·μᵀ  (for matrix form)</div>
+  <p>Result: Every feature has mean = 0</p>
+
+  <div class="box box-blue">
+    <div class="box-title">💡 Kyun Center Karte Hain?</div>
+    <p>PCA is about spread AROUND THE CENTER, not distance from some arbitrary origin. Centering ke baad coordinates represent karte hain: "average se kitna door?"</p>
+  </div>
+
+  <h3>Standardization — Kabhi Zaroori Hai?</h3>
+  <div class="compare-grid">
+    <div class="compare-card card-green">
+      <h4>Sirf Centering</h4>
+      <ul>
+        <li>Jab features comparable units/scales mein hon</li>
+        <li>Just x - μ</li>
+      </ul>
+    </div>
+    <div class="compare-card card-red">
+      <h4>Standardization</h4>
+      <ul>
+        <li>Jab units alag hain</li>
+        <li>Income: 500,000 vs Age: 20</li>
+        <li>z = (x - μ) / s</li>
+        <li>Income ki scale dominate na kare!</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="danger">
+    Split FIRST! Phir training data ke means/scales calculate karo. Validation/test data par SAME transformation apply karo. Never standardize on full dataset then CV!
+  </div>
+
+  <h3>Covariance — Intuition Samjho</h3>
+  <div class="box box-yellow">
+    <div class="box-title">💡 Variance vs Covariance</div>
+    <p><strong>Variance:</strong> "Ek feature khud kitna spread karta hai?"</p>
+    <p><strong>Covariance:</strong> "Do features saath mein kaise move karte hain?"</p>
+  </div>
+
+  <div class="math-display">Cov(x, y) = (1/(n-1)) × Σ(x_i - x̄)(y_i - ȳ)</div>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>Sign</th><th>Matlab</th></tr>
+      <tr><td>Cov > 0</td><td>Both tend to be above/below average together (same direction)</td></tr>
+      <tr><td>Cov < 0</td><td>One high when other low (opposite direction)</td></tr>
+      <tr><td>Cov ≈ 0</td><td>Little linear co-movement</td></tr>
+    </table>
+  </div>
+
+  <div class="danger">
+    Cov = 0 ≠ Independence! y = x² example: perfectly deterministic, but covariance = 0! Same as Pearson r = 0 trap!
+  </div>
+
+  <h3>Covariance Matrix (p×p)</h3>
+  <div class="math-display">S = (1/(n-1)) × X_cᵀ X_c
+
+For 3 features:
+     [Var(X1)       Cov(X1,X2)   Cov(X1,X3)]
+S =  [Cov(X2,X1)   Var(X2)      Cov(X2,X3)]
+     [Cov(X3,X1)   Cov(X3,X2)   Var(X3)   ]</div>
+
+  <div class="box box-green">
+    <div class="box-title">✅ Key Properties</div>
+    <p><strong>Diagonal entries:</strong> Variances of individual features</p>
+    <p><strong>Off-diagonal entries:</strong> Pairwise covariances</p>
+    <p><strong>S = Sᵀ</strong> → Symmetric (Cov(Xi, Xj) = Cov(Xj, Xi))</p>
+  </div>
+
+  <h3>Eigenvectors — The Magic Word!</h3>
+
+  <div class="box box-blue">
+    <div class="box-title">🔮 Eigen Equation</div>
+    <div class="math-display">Sv = λv</div>
+    <p><strong>v</strong> = eigenvector (direction)<br>
+    <strong>λ</strong> = eigenvalue (how much this direction captures)</p>
+    <p>Normally matrix A rotates a vector. For eigenvector: <strong>direction stays same, only size changes!</strong></p>
+  </div>
+
+  <div class="example">
+    General vector:     Eigenvector:
+         ↗   →               ↗
+    A changes direction  A only stretches/shrinks!
+                         Same line, different length!
+  </div>
+
+  <h3>PCA mein Eigenvectors ka Role</h3>
+  <div class="box box-yellow">
+    <div class="box-title">⭐ Central Mathematical Result</div>
+    <p>Eigenvectors of covariance matrix = <strong>Principal Directions</strong></p>
+    <p>Eigenvalues = <strong>Variance captured in those directions</strong></p>
+    <p>This is the ELEGANT SOLUTION to the maximum-variance problem!</p>
+  </div>
+
+  <h4>Eigenvalue Equation</h4>
+  <div class="math-display">|S - λI| = 0  →  find eigenvalues λ
+Then: Sv = λv  →  find eigenvectors v</div>
+
+  <h3>Principal Components ka Ranking</h3>
+  <div class="example">
+    Suppose eigenvalues:<br>
+    λ1 = 10 → PC1 captures variance 10 (MOST)<br>
+    λ2 = 3  → PC2 captures variance 3<br>
+    λ3 = 1  → PC3 captures variance 1<br><br>
+    PC1 = eigenvector associated with LARGEST eigenvalue!<br>
+    Sort eigenvalues: λ1 ≥ λ2 ≥ λ3 ≥ ...
+  </div>
+
+  <h3>Orthogonal Means What?</h3>
+  <div class="example">
+    PC1 aur PC2 perpendicular hote hain (90°):<br>
+    <div class="diagram" style="font-size:13px;">        PC1 →
+
+        ↑
+        │ PC2
+        │</div>
+    PC1 and PC2 are perpendicular directions.
+    Transformed covariance becomes DIAGONAL (no cross-terms)!
+  </div>
+
+  <h3>Projection — "Point ko New Axis Par Measure Karna"</h3>
+  <div class="math-display">z = uᵀx  (projection score)</div>
+  <p>Where u = unit direction, x = centered data point, z = scalar coordinate along that direction.</p>
+
+  <div class="example">
+    x = [3, 1]ᵀ<br>
+    u = (1/√2)[1, 1]ᵀ<br><br>
+    z = uᵀx = (1/√2)(3) + (1/√2)(1) = 4/√2 = 2√2 ≈ 2.828<br><br>
+    Projected point: zu = [2, 2]ᵀ (point on the direction line)<br><br>
+    Original: [3, 1], Projected: [2, 2] → Different!<br><br>
+    Residual (info lost): e = x - zu = [1, -1]ᵀ
+  </div>
+
+  <h3>Pythagorean Decomposition</h3>
+  <div class="math-display">||x||² = z² + ||e||²</div>
+  <p>"Original energy = captured part + lost part"</p>
+  <p>PCA preserves maximum z² (captured part) when reducing dimensions!</p>
+
+  <h3>PCA Core Optimization</h3>
+  <div class="math-display">max over ||u||=1: Var(uᵀX)</div>
+  <p>Which u produces maximum variance of projected scores?</p>
+  <div class="formula">Answer: u = eigenvector of covariance matrix!</div>
+</div>
+
+
+<!-- PCA NUMERICAL EXAMPLE -->
+<div class="lecture" id="pca-example">
+  <h2>PCA Numerical Example — Step by Step 🔢</h2>
+
+  <h3>Three Houses Dataset</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>House</th><th>Bedroom (f1)</th><th>Washroom (f2)</th></tr>
+      <tr><td>A</td><td>2</td><td>1</td></tr>
+      <tr><td>B</td><td>4</td><td>3</td></tr>
+      <tr><td>C</td><td>6</td><td>5</td></tr>
+    </table>
+  </div>
+
+  <h3>Step 1 — Calculate Mean</h3>
+  <div class="example">
+    Bedroom mean: x̄1 = (2+4+6)/3 = 4<br>
+    Washroom mean: x̄2 = (1+3+5)/3 = 3<br><br>
+    μ = [4, 3]ᵀ
+  </div>
+
+  <h3>Step 2 — Center the Data</h3>
+  <div class="example">
+    House A: (2-4, 1-3) = (-2, -2)<br>
+    House B: (4-4, 3-3) = (0, 0)<br>
+    House C: (6-4, 5-3) = (2, 2)<br><br>
+    Xc = [[-2, -2], [0, 0], [2, 2]]
+  </div>
+
+  <h3>Step 3 — Covariance Matrix</h3>
+  <div class="math-display">S = (1/(n-1)) × Xcᵀ Xc = (1/2) × Xcᵀ Xc</div>
+  <div class="math-display">S = [[4, 4],
+     [4, 4]]</div>
+
+  <h3>Step 4 — Eigenvalues & Eigenvectors</h3>
+  <div class="compare-grid">
+    <div class="compare-card card-green">
+      <h4>PC1 (Most Variance)</h4>
+      <p style="font-family:'Courier New',monospace;">v1 = (1/√2)[1, 1]ᵀ</p>
+      <p>λ1 = 8</p>
+      <p style="font-family:'Patrick Hand',cursive; font-size:14px;">Direction: both features increase together → "overall house size"</p>
+    </div>
+    <div class="compare-card card-red">
+      <h4>PC2 (Least Variance)</h4>
+      <p style="font-family:'Courier New',monospace;">v2 = (1/√2)[1, -1]ᵀ</p>
+      <p>λ2 = 0</p>
+      <p style="font-family:'Patrick Hand',cursive; font-size:14px;">Direction: bedroom vs washroom contrast. But ZERO variance!</p>
+    </div>
+  </div>
+
+  <h3>Step 5 — Project Onto PC1</h3>
+  <div class="math-display">Z1 = Xc × v1</div>
+  <div class="example">
+    House A: (-2, -2) · (1/√2, 1/√2) = -2√2 ≈ -2.83<br>
+    House B: (0, 0)   · (1/√2, 1/√2) = 0<br>
+    House C: (2, 2)   · (1/√2, 1/√2) = 2√2 ≈ 2.83<br><br>
+    Z1 = [-2.83, 0, 2.83]ᵀ
+  </div>
+
+  <h3>Step 6 — Explained Variance Ratio</h3>
+  <div class="math-display">Total variance = λ1 + λ2 = 8 + 0 = 8</div>
+  <div class="math-display">EVR1 = 8 / (8+0) = 1 = 100%!</div>
+
+  <div class="box box-green">
+    <div class="box-title">✅ Lossless Compression!</div>
+    <p>PC1 alone preserves ALL variance. Why?</p>
+    <p>All three houses lie on a straight line: f2 = f1 - 1</p>
+    <p>There's only ONE degree of freedom. PCA discovers that hidden 1D structure!</p>
+  </div>
+
+  <h3>λ2 = 0 Kyun?</h3>
+  <div class="example">
+    Data points: (2,1), (4,3), (6,5) — all on y = x-1 line<br>
+    No variation perpendicular to this line!<br>
+    PC2 direction (1,-1) is perpendicular to data's actual spread<br>
+    → Zero spread in that direction → λ2 = 0
+  </div>
+
+  <div class="memory">
+    <div class="memory-title">🧠 Eigenvalue Geometric Meaning</div>
+    <pre>λ_j = VARIANCE of the data scores along v_j
+
+Large λ → big spread → important direction ⭐
+Small λ → tiny spread → less variance
+λ = 0   → NO spread in that direction</pre>
+  </div>
+</div>
+
+
+<!-- PCA PIPELINE + CHOOSING K -->
+<div class="lecture" id="pca-choose-k">
+  <h2>PCA Pipeline & Choosing k</h2>
+
+  <h3>Complete PCA Pipeline</h3>
+
+  <ol class="steps">
+    <li>Data split karo (Train / Validation / Test) — PEHLE!</li>
+    <li>Training data pe mean (μ_train) aur scale (s_train) calculate karo</li>
+    <li>Training data center/scale karo</li>
+    <li>S = (1/(n-1)) × Xcᵀ Xc → Covariance matrix</li>
+    <li>Eigendecomposition: Sv_j = λ_j v_j for all j</li>
+    <li>Eigenvalues sort karo: λ1 ≥ λ2 ≥ ... ≥ λp</li>
+    <li>k choose karo (number of components to keep)</li>
+    <li>W_k = [v1, v2, ..., vk] matrix banao (p×k)</li>
+    <li>Transform: Z_train = X_c,train × W_k (n×k result)</li>
+    <li>Test data: Z_test = (X_test - 1·μ_train) × W_k</li>
+  </ol>
+
+  <h3>Test Data Transform — Very Important!</h3>
+  <div class="math-display">Z_test = (X_test - 1·μ_train^T) × W_k</div>
+  <div class="danger">
+    Use μ_train, NOT test mean! Same fitted PCA directions W_k use karo. KABHI test pe PCA refit mat karo. Agar test ka apna mean use karo → Information leakage!
+  </div>
+
+  <h3>Total Variance aur EVR</h3>
+  <div class="math-display">Total variance = Σλ_j = trace(S)</div>
+  <div class="math-display">EVR_j = λ_j / Σλ_ℓ  (explained variance ratio)</div>
+  <div class="math-display">Cumulative EVR_k = Σ(j=1 to k) λ_j / Σλ_ℓ</div>
+
+  <h3>Example: Choosing k</h3>
+  <p>Suppose eigenvalues: λ = [6, 2, 1, 0.5], Total = 9.5</p>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>k</th><th>Cumulative Variance</th><th>≥ 90%?</th></tr>
+      <tr><td>k=1</td><td>6/9.5 = 63.2%</td><td>❌</td></tr>
+      <tr><td>k=2</td><td>8/9.5 = 84.2%</td><td>❌</td></tr>
+      <tr style="background:#e8f5e9;"><td><strong>k=3</strong></td><td><strong>9/9.5 = 94.7%</strong></td><td>✅</td></tr>
+    </table>
+  </div>
+
+  <p>Smallest k reaching 90%: <strong>k = 3</strong></p>
+
+  <div class="danger">
+    k = 3 automatically BEST hai? NO! PCA maximizes VARIANCE, not prediction accuracy! Maybe PC4 carries only 5.3% variance but is CRITICAL for the target. → k should be VALIDATED against actual downstream task!
+  </div>
+
+  <h3>Ways to Choose k</h3>
+  <div class="pillar-grid">
+    <div class="pillar" style="background:#e3f2fd; border-color:#1565c0;">
+      <div class="pillar-icon">📊</div>
+      <div class="pillar-title" style="color:#1565c0;">Variance Threshold</div>
+      <p>Smallest k reaching 90%/95%. But then validate!</p>
+    </div>
+    <div class="pillar" style="background:#e8f5e9; border-color:#2e7d32;">
+      <div class="pillar-icon">📈</div>
+      <div class="pillar-title" style="color:#2e7d32;">Scree Plot</div>
+      <p>Find where eigenvalues stop dropping rapidly (elbow)</p>
+    </div>
+    <div class="pillar" style="background:#fff3e0; border-color:#e65100;">
+      <div class="pillar-icon">👁️</div>
+      <div class="pillar-title" style="color:#e65100;">Visualization</div>
+      <p>k=2 or k=3 for human inspection</p>
+    </div>
+    <div class="pillar" style="background:#f3e5f5; border-color:#7b1fa2;">
+      <div class="pillar-icon">🔧</div>
+      <div class="pillar-title" style="color:#7b1fa2;">Downstream CV</div>
+      <p>Treat k as hyperparameter inside cross-validation</p>
+    </div>
+  </div>
+
+  <h3>Scree Plot</h3>
+  <div class="diagram" style="font-size:13px;">λ (eigenvalue)
+|
+| ██████████████
+| ██████████
+| ████
+| ██
+| █
+| ▌
++────────────────────> PC number
+  1   2   3   4   5   6
+
+Elbow ≈ where curve bends (diminishing returns after this point)
+Maybe k = 2 or 3 here.</div>
+
+  <h3>PCA Leakage — BAHUT IMPORTANT!</h3>
+
+  <div class="danger">
+    WRONG: Entire dataset → Standardize → PCA → 5 PCs → 5-fold CV<br><br>
+    WHY WRONG? Means, scales, eigenvectors use ALL observations including validation folds. So validation folds influenced the transformation. Performance reported = Optimistic/Inflated!
+  </div>
+
+  <h3>Correct PCA + CV Pipeline</h3>
+  <div class="diagram">For EACH fold:
+
+Training fold
+   ↓
+Compute μ_train, scale_train
+   ↓
+Center/scale training data
+   ↓
+Compute covariance
+   ↓
+Find eigenvectors
+   ↓
+Fix k
+   ↓
+Transform training data
+   ↓
+Transform validation using SAME training μ/scale/eigenvectors
+   ↓
+Train downstream model
+   ↓
+Evaluate validation
+
+Then next fold repeats the ENTIRE process!</div>
+
+  <h3>Bias-Variance Connection to PCA</h3>
+  <div class="compare-grid">
+    <div class="compare-card card-green">
+      <h4>k ↓ (fewer components)</h4>
+      <ul>
+        <li>Representation complexity ↓</li>
+        <li>Variance may ↓ (good!)</li>
+        <li>Approximation bias ↑ (bad!)</li>
+        <li>Simpler model</li>
+      </ul>
+    </div>
+    <div class="compare-card card-red">
+      <h4>k ↑ (more components)</h4>
+      <ul>
+        <li>Representation complexity ↑</li>
+        <li>Variance may ↑</li>
+        <li>Approximation bias ↓</li>
+        <li>More faithful to data</li>
+      </ul>
+    </div>
+  </div>
+  <p>PCA dimensionality reduction itself participates in the bias-variance tradeoff!</p>
+</div>
+
+
+<!-- PCA FAILURES -->
+<div class="lecture" id="pca-fail">
+  <h2>When PCA Fails 🚫</h2>
+
+  <h3>Failure Case 1 — Circular Data</h3>
+  <div class="example">
+    <div class="diagram" style="font-size:13px;">        ***
+      *     *
+     *   +   *    (circle of points)
+      *     *
+        ***</div>
+    All directions have roughly equal spread → λ1 ≈ λ2<br>
+    No obvious dominant direction!<br>
+    PCA has no unique "best" direction carrying most variance.
+  </div>
+
+  <h3>Failure Case 2 — Class Information in Low-Variance Direction</h3>
+  <div class="example">
+    <div class="diagram" style="font-size:13px;">      A A A
+      A A A
+──────────────── PC1 (main variance direction)
+      B B B
+      B B B</div>
+    Classes differ in vertical direction.<br>
+    PCA doesn't know about labels (unsupervised!).<br>
+    It picks PC1 = horizontal (most total variance).<br>
+    Projecting onto PC1 → Classes A and B MERGE! 😱<br>
+    Class information DESTROYED!
+  </div>
+
+  <h3>Failure Case 3 — Nonlinear Data</h3>
+  <div class="example">
+    Suppose data lies on a curve like y = x²<br>
+    PCA is LINEAR — it can rotate/project but can't "unroll" a curved manifold!<br>
+    Linear projection can squash important nonlinear structure.
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>PCA Helps When...</th><th>PCA Does NOT Guarantee...</th></tr>
+      <tr><td>Visualization (k=2 or 3)</td><td>Better prediction</td></tr>
+      <tr><td>Compression</td><td>Class separation</td></tr>
+      <tr><td>Faster downstream learning</td><td>Causal meaning preserved</td></tr>
+      <tr><td>Remove linear redundancy</td><td>Target-relevant info preserved</td></tr>
+      <tr><td>Noise reduction (if low-var ≈ noise)</td><td>Nonlinear structures captured</td></tr>
+    </table>
+  </div>
+
+  <h3>PCA aur Multicollinearity</h3>
+  <div class="example">
+    X1 ≈ X2 (highly correlated features)<br><br>
+    PCA creates:<br>
+    PC1 ≈ X1 + X2 (large variance direction)<br>
+    PC2 ≈ X1 - X2 (tiny variance → maybe remove)<br><br>
+    Dimensionality reduces aur linear redundancy bhi reduce hoti hai!<br>
+    Linear model coefficients potentially more stable.
+  </div>
+
+  <h3>Feature Selection vs PCA — Final Full Comparison</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Property</th><th>Feature Selection</th><th>PCA</th></tr>
+      <tr><td>Output</td><td>Original features</td><td>New PC components</td></tr>
+      <tr><td>Original meaning preserved?</td><td>Yes</td><td>Usually not directly</td></tr>
+      <tr><td>Correlation handling</td><td>Keep one feature</td><td>Combines correlated variation</td></tr>
+      <tr><td>Uses target?</td><td>Depends on method</td><td>Standard PCA: NO</td></tr>
+      <tr><td>Main operation</td><td>Keep/discard columns</td><td>Rotate + project</td></tr>
+      <tr><td>Interpretability</td><td>Features meaningful</td><td>PCs are combinations</td></tr>
+    </table>
+  </div>
+
+  <h3>Why "Feature Extraction" and not "Feature Selection"?</h3>
+  <div class="box box-blue">
+    <div class="box-title">💡 PCA = Feature EXTRACTION</div>
+    <p>We're not saying: "Feature 1 is useful." We're CONSTRUCTING new features:</p>
+    <div class="formula">PC1 = w1·X1 + w2·X2 + w3·X3 (new extracted feature!)</div>
+    <p>Component = extracted direction. That's why "extraction" ≠ "selection."</p>
+  </div>
+
+  <h3>Second Mini Example (From Worksheet)</h3>
+  <div class="example">
+    Centered data:<br>
+    x1 = [-1, -1], x2 = [0, 0], x3 = [1, 1]<br><br>
+    Xc = [[-1,-1], [0,0], [1,1]]<br><br>
+    S = [[1, 1], [1, 1]]<br><br>
+    v1 = (1/√2)[1, 1], λ1 = 2<br>
+    v2 = (1/√2)[1, -1], λ2 = 0<br><br>
+    EVR1 = 2/(2+0) = 100%!<br><br>
+    All points on y = x line → 1 degree of freedom → PC1 captures everything!
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-title">📝 Lecture 11 — Self Check</div>
+    <ol>
+      <li>Dimensionality ka matlab kya hai?</li>
+      <li>Feature selection aur PCA mein exact difference kya hai?</li>
+      <li>PCA supervised hai ya unsupervised?</li>
+      <li>Mean centering kyun karte hain?</li>
+      <li>Standardization kab useful hoti hai?</li>
+      <li>Covariance ka positive/negative/zero sign kya batata hai?</li>
+      <li>Covariance matrix diagonal aur off-diagonal entries kya represent karte hain?</li>
+      <li>Eigenvector aur eigenvalue plain language mein explain karo</li>
+      <li>PCA mein eigenvector ka role kya hai?</li>
+      <li>Projection score z = uᵀx ka geometric meaning?</li>
+      <li>EVR formula kya hai?</li>
+      <li>90% cumulative EVR milne ke baad bhi k validate kyun karna?</li>
+      <li>PCA full dataset pe fit karke CV = leakage kyun?</li>
+      <li>Circular data mein PCA kyun fail hota hai?</li>
+      <li>Feature extraction vs feature selection ek line mein?</li>
+    </ol>
+  </div>
+</div>
+
+
+<!-- ======================================================= -->
+<!-- MEGA SUMMARY + CHEAT SHEET -->
+<!-- ======================================================= -->
+<div class="lecture" id="mega-summary">
+  <div class="lecture-header">
+    <div class="lecture-badge" style="background:#c0392b; color:white;">★ Final Summary</div>
+    <div class="lecture-title">🔥 Mega Summary & Cheat Sheet</div>
+    <div class="lecture-subtitle">Sab kuch ek jagah — Exam ready version</div>
+  </div>
+
+  <h2>Lectures 8-9-10-11: The Beautiful Chain</h2>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="tl-title">Lecture 8 — Polynomial Features</div>
+      <p>Model can't fit curve? Create x², x³ to improve representation!</p>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-title">Lecture 9 — Bias-Variance</div>
+      <p>More complexity → reduce bias but increase variance. Balance!!</p>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-title">Lecture 10 — Feature Selection</div>
+      <p>Too many features → irrelevant ones add noise/variance. Select useful subset!</p>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-title">Lecture 11 — PCA</div>
+      <p>Useful info spread across many features → Extract principal directions!</p>
+    </div>
+  </div>
+
+  <div class="mega-point">Representation → Complexity → Feature Selection → Dimensionality Reduction → Generalization</div>
+
+  <h2>COMPLETE CHEAT SHEET 📋</h2>
+
+  <h3>Lecture 0 — Foundation</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Concept</th><th>One-Line Definition</th></tr>
+      <tr><td>Traditional Programming</td><td>Data + Rules → Answers</td></tr>
+      <tr><td>Machine Learning</td><td>Data + Answers → Learned Patterns/Rules</td></tr>
+      <tr><td>AI</td><td>Broad field: machines that behave intelligently</td></tr>
+      <tr><td>ML</td><td>AI ka major subset: data se patterns learn karna</td></tr>
+      <tr><td>DL</td><td>ML ka subset: deep neural networks via multiple layers</td></tr>
+      <tr><td>Hierarchy</td><td>DL ⊂ ML ⊂ AI</td></tr>
+      <tr><td>Labelled Data</td><td>Input + Ground Truth Answer</td></tr>
+      <tr><td>Unlabelled Data</td><td>Input only</td></tr>
+      <tr><td>Supervised</td><td>Labels hain → learn mapping X → Y</td></tr>
+      <tr><td>Unsupervised</td><td>No labels → hidden structure discover</td></tr>
+      <tr><td>Semi-Supervised</td><td>Kuch labels + bahut unlabelled</td></tr>
+      <tr><td>Reinforcement</td><td>Agent + environment + rewards/penalties</td></tr>
+      <tr><td>Regression</td><td>Continuous numerical value predict</td></tr>
+      <tr><td>Classification</td><td>Predefined discrete category predict</td></tr>
+      <tr><td>Clustering</td><td>Unlabelled data ke natural groups discover</td></tr>
+    </table>
+  </div>
+
+  <h3>Lecture 10 — Feature Selection</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Concept</th><th>Formula/Rule</th></tr>
+      <tr><td>Variance Filter</td><td>Var(fj) &lt; τ → remove candidate</td></tr>
+      <tr><td>Low variance ≠</td><td>Useless! (rare binary can be predictive)</td></tr>
+      <tr><td>High variance ≠</td><td>Predictive! (Student_ID varies but useless)</td></tr>
+      <tr><td>Pearson r</td><td>-1 ≤ r ≤ +1, measures LINEAR association only</td></tr>
+      <tr><td>r = 0 ≠</td><td>No predictive value (y=x² has r=0 but perfect!)</td></tr>
+      <tr><td>Exhaustive subsets</td><td>2^p - 1</td></tr>
+      <tr><td>Backward path</td><td>p(p+1)/2 candidates</td></tr>
+      <tr><td>Filter</td><td>Fast, statistical, usually model-independent</td></tr>
+      <tr><td>Wrapper</td><td>Slower, model-specific, uses validation performance</td></tr>
+      <tr><td>Leakage rule</td><td>Selection INSIDE training fold only!</td></tr>
+      <tr><td>Test set rule</td><td>Untouched until FINAL evaluation!</td></tr>
+      <tr><td>Feature usefulness</td><td>= f(target, model, metric, sample, validation)</td></tr>
+    </table>
+  </div>
+
+  <h3>Lecture 11 — PCA</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Concept</th><th>Formula/Rule</th></tr>
+      <tr><td>Centering</td><td>Xc = X - 1·μᵀ</td></tr>
+      <tr><td>Standardization</td><td>z_ij = (x_ij - μ_j) / s_j</td></tr>
+      <tr><td>Covariance</td><td>Cov(x,y) = (1/(n-1)) Σ(xi-x̄)(yi-ȳ)</td></tr>
+      <tr><td>Covariance matrix</td><td>S = (1/(n-1)) XcᵀXc, symmetric</td></tr>
+      <tr><td>Eigen equation</td><td>Sv = λv</td></tr>
+      <tr><td>Eigenvector</td><td>Direction (principal component)</td></tr>
+      <tr><td>Eigenvalue</td><td>Variance captured in that direction</td></tr>
+      <tr><td>Projection score</td><td>z = uᵀx</td></tr>
+      <tr><td>Transformation</td><td>Z = Xc·Wk (n×k)</td></tr>
+      <tr><td>Total variance</td><td>Σλj = trace(S)</td></tr>
+      <tr><td>EVR</td><td>λj / Σλℓ</td></tr>
+      <tr><td>Cumulative EVR</td><td>Σ(j=1 to k)λj / Σλℓ</td></tr>
+      <tr><td>PCA is</td><td>Unsupervised, linear, feature extraction</td></tr>
+      <tr><td>PCA does NOT guarantee</td><td>Better prediction, class separation</td></tr>
+      <tr><td>Leakage rule</td><td>Fit PCA inside each CV fold on training only!</td></tr>
+    </table>
+  </div>
+
+  <h2>All 5+5+7 Traps in One Place 🚨</h2>
+
+  <div class="box box-pink">
+    <div class="box-title">🚨 L0 Traps</div>
+    <p>❌ AI = ML (Nahi! AI bigger hai)<br>
+    ❌ ML = DL (Nahi! DL ⊂ ML)<br>
+    ❌ Supervised = Classification (Regression bhi supervised hai!)<br>
+    ❌ Unsupervised = Clustering only (broader field hai)<br>
+    ❌ Label = automatic supervised (task bhi samajhna padega)</p>
+  </div>
+
+  <div class="box box-yellow">
+    <div class="box-title">⚠️ L10 Traps</div>
+    <p>❌ High variance → predictive (Student_ID!)<br>
+    ❌ Rare binary → useless (scholarship flag!)<br>
+    ❌ Correlated features → delete x² (curvature needed!)<br>
+    ❌ r = 0 → no predictive value (y=x² ka example!)<br>
+    ❌ Feature selection before CV → leakage!</p>
+  </div>
+
+  <div class="box box-blue">
+    <div class="box-title">💡 L11 Traps</div>
+    <p>❌ PCA selects most predictive features (Nahi! variance maximize karta hai)<br>
+    ❌ Cov = 0 → no relationship (nonlinear ho sakta hai!)<br>
+    ❌ Standardization always necessary (depends on scales)<br>
+    ❌ 90% EVR → optimal k (validate downstream!)<br>
+    ❌ PC1 = first original feature (Nahi! linear combination hai)<br>
+    ❌ PCA preserves nonlinear manifolds (linear method hai!)<br>
+    ❌ PCA once on full dataset, then CV → leakage!</p>
+  </div>
+
+  <h2>🧠 Final Master Mental Map</h2>
+  <div class="diagram">                            AI (Umbrella)
+                             │
+          ┌──────────────────┼───────────────────┐
+          │                  │                   │
+        Search              ML               Robotics
+                             │
+                            DL
+
+     ─────────────────────────────────────────────
+     
+     DATA + LABELS?
+          │
+          ├── YES → SUPERVISED LEARNING
+          │              │
+          │         ┌────┴────┐
+          │         │         │
+          │    REGRESSION  CLASSIFICATION
+          │
+          ├── NO  → UNSUPERVISED LEARNING
+          │              │
+          │           CLUSTERING
+          │
+          ├── SOME YES + LOTS NO → SEMI-SUPERVISED
+          │
+          └── AGENT + ENVIRONMENT → REINFORCEMENT
+          
+     ─────────────────────────────────────────────
+     
+     FEATURE SELECTION (L10)
+          │
+     ┌────┴──────┐
+   FILTER      WRAPPER
+     │             │
+  Fast,        Model-in-loop,
+  Statistical  Validation-based
+     │             │
+  (duplicate,  (exhaustive/
+   variance,    backward/
+   correlation) forward)
+     │             │
+     └──────┬───────┘
+            │
+      Leakage discipline:
+      Selection INSIDE training fold!
+      Test set LOCKED until end!
+            │
+     ─────────────────────────────────────────────
+     
+     PCA (L11)
+          │
+     Center/Scale
+          │
+     Covariance Matrix S
+          │
+     Eigendecomposition: Sv = λv
+          │
+     Sort: λ1 ≥ λ2 ≥ ... ≥ λp
+          │
+     Choose k
+          │
+     Z = Xc × Wk   (n×p → n×k)
+          │
+     Lower Dimensions!
+     (Unsupervised, Linear, Feature Extraction)</div>
+
+  <div class="memory">
+    <div class="memory-title">🔥 ULTIMATE ONE-LINERS — Ek baar padhke exam dena!</div>
+    <pre>Traditional = Data + Rules → Answers
+ML          = Data + Answers → Patterns
+
+AI ⊃ ML ⊃ DL   (DL is inside ML is inside AI)
+
+Labels?  YES→Supervised  NO→Unsupervised  SOME→Semi  AGENT→RL
+
+Output?  Number→Regression  Category→Classification  Groups→Clustering
+
+Variance = SPREAD (not relevance!)
+r = 0 → Linear association zero (nonlinear CAN still predict!)
+Rare ≠ Useless.  High variance ≠ Predictive.
+
+Exhaustive subsets = 2^p - 1
+Backward path ≈ p(p+1)/2
+
+Feature Selection → Original axes retain/discard
+PCA             → NEW axes create (feature EXTRACTION)
+
+PCA = UNSUPERVISED + LINEAR + maximize VARIANCE
+Eigenvector = DIRECTION
+Eigenvalue  = VARIANCE captured
+
+EVR_j = λ_j / Σλ_ℓ
+
+LEAKAGE RULE (both L10 and L11):
+Selection/PCA INSIDE CV fold on TRAINING data ONLY!
+Test set UNTOUCHED until very end!</pre>
+  </div>
+
+  <div class="box box-dark">
+    <div class="box-title">💬 Final Words</div>
+    <p style="color:#ecf0f1;">Bhai, yeh poore notes teri ML journey ka solid foundation hain. Lecture 0 se leke L11 tak ek hi story hai:</p>
+    <p style="color:#f39c12;"><strong>Traditional rules se shuru kiya → Data se learn karna seekha → Complex data ke liye DL laya → Features carefully choose karna seekha → Phir naye axis banake compress karna seekha.</strong></p>
+    <p style="color:#ecf0f1;">Ab tu ready hai! Koi bhi concept yaad karna ho, yeh notes khol aur us section pe ja. Sab kuch yahan hai. 🚀</p>
+  </div>
+</div>
+
+</div><!-- /notebook -->
+
+<a href="#top" class="back-to-top" title="Top pe jao">↑</a>
+
+<script>
+// Progress bar
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrolled = doc.scrollTop || document.body.scrollTop;
+  const total = doc.scrollHeight - doc.clientHeight;
+  const pct = (scrolled / total) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+</script>
+</body>
+</html>
